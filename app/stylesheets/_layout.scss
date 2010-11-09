@@ -218,6 +218,7 @@ h4.dashboard_title {
 }
 .add_new_button {
   background:#72939c;
+  margin:5px 0 0 0;
   padding: 3px 5px 3px 5px;
   color:#fff;
   border:1px solid #9eabb2;
@@ -235,8 +236,8 @@ h4.dashboard_title {
   border:1px solid #9eabb2;
   text-decoration:none;
   font-size:1.1em;
-  float:right;
-  margin: 5px 0 0 0;
+  float:left;
+  margin: 5px 10px 0 0;
   &:hover {
     background:#462626;
     color:#ccc;
