@@ -1,12 +1,9 @@
-- content_for :javascripts do
-  = javascript_include_tag "add_work_unit"
-
-#add-work-unit
-  %h4.dashboard_title Add Work Unit
+#add_work_unit
+  %h3.dashboard_title Add Work Unit
 
   = form_for WorkUnit.new(params[:work_unit]) do |f|
 
-    #work-unit-errors
+    #work_unit_errors
 
     .work_unit_field
       %label Scheduled On:
@@ -14,9 +11,9 @@
 
     #schedule_modal
       %p It is best to enter work units on days you completed the work, please use this wisely.
-      %label Scheduled On:
-      = text_field_tag :scheduled_at, Time.current.strftime("%m/%d/%Y")
-      = f.hidden_field :scheduled_at
+      .work_unit_field
+        %label Scheduled On:
+        = text_field_tag :scheduled_at, Time.current.strftime("%m/%d/%Y")
 
     .work_unit_field
       %label{:for => "work_unit_client_id"} Client:
@@ -31,6 +28,10 @@
       = collection_select("work_unit", "ticket_id", @tickets, "id", "name", { :prompt => "Select a ticket" })
 
     .work_unit_field
+      %label{:for => "hours_type"} Type:
+      = select_tag('hours_type', options_for_select(['Normal', 'Overtime']))
+
+    .work_unit_field
       %label{:for => "work_unit_hours"} Hours:
       = f.text_field :hours, { :size => 10 }
 
@@ -39,6 +40,5 @@
       = f.text_area :description, { :rows => 10, :style => "resize: none;"}
 
     .work_unit_field
-      %label{:for => "work_unit_ovetime"} Overtime:
-      = f.check_box "overtime"
-      = f.submit "Add New", :class => 'add_new_button'
+      = f.hidden_field :scheduled_at
+      = f.submit "Create Work Unit", :class => 'add_new_button'
