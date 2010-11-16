@@ -1,12 +1,9 @@
 class Admin::UsersController < Admin::BaseController
-  before_filter :load_user_account, :only => [:show, :update, :edit, :destroy]
+  before_filter :load_user_account, :only => [:update, :edit, :destroy]
   before_filter :load_new_user_account, :only => [:new, :create]
 
   def index
     @users = User.all
-  end
-
-  def show
   end
 
   def new
@@ -41,16 +38,6 @@ class Admin::UsersController < Admin::BaseController
     else
       flash[:error] = "Didn't update."
       redirect_to edit_admin_user_path(@user)
-    end
-  end
-
-  def destroy
-    if @user.destroy
-      flash[:notice] = "User deleted."
-      redirect_to admin_users_path
-    else
-      flash[:error] = "Couldn't delete the user"
-      redirect_to admin_user_path(@user)
     end
   end
 

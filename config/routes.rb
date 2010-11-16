@@ -14,6 +14,7 @@ AssetTrackerTutorial::Application.routes.draw do
     resources :projects
     resources :unentered_time_report
     resources :weekly_time_report
+    resources :clients
   end
   get '/admin', :controller => "admin/base", :action => "index"
 
@@ -49,11 +50,8 @@ AssetTrackerTutorial::Application.routes.draw do
 
   namespace :dashboard do
     resources :base do
-      collection do
-        get :recent_work
-      end
-    end
-    resources :work_units
+  end
+
   end
   get '/dashboard', :controller => "dashboard/base", :action => "index"
   get '/dashboard/client', :controller => "dashboard/base", :action => "client"

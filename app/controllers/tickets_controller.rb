@@ -1,7 +1,7 @@
 class TicketsController < ApplicationController
   before_filter :load_project
   before_filter :load_new_ticket
-  before_filter :load_ticket, :only => [:show, :edit, :update, :destroy]
+  before_filter :load_ticket, :only => [:show, :edit, :update]
   before_filter :load_file_attachments, :only => [:show, :new, :create]
 
   protected
@@ -23,9 +23,6 @@ class TicketsController < ApplicationController
   end
 
   public
-  def index
-    @tickets = @project.tickets
-  end
 
   def new
   end
@@ -53,16 +50,6 @@ class TicketsController < ApplicationController
     else
       flash.now[:error] = "There was a problem saving the ticket."
       render :action => 'new'
-    end
-  end
-
-  def destroy
-    if @ticket.destroy
-      flash[:notice] = "Ticket destroyed successfully."
-      redirect_to project_tickets_path(@project)
-    else
-      flash.now[:error] = "There was a problem destroying the ticket."
-      redirect_to project_ticket_path(@project, @ticket)
     end
   end
 
