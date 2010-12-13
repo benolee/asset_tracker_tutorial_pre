@@ -1,10 +1,9 @@
 .yui3-g
   .yui3-u-1
-    %h2 New project
+    %h2= t(:new_project)
 .yui3-g
   .yui3-u-1
     .gradient_border_wrap
       .gradient_border_content
         = render 'form'
-        = link_to 'Back to client', client_path(@project.client)
 

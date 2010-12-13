@@ -36,6 +36,33 @@ describe WorkUnit do
     subject.respond_to?(:comments).should be true
   end
 
+  describe 'for_client' do
+    it 'should return the proper work units for a given client' do
+      work_unit_1 = WorkUnit.make
+      ticket = work_unit_1.ticket
+      client = work_unit_1.client
+      work_unit_2 = WorkUnit.make(:ticket => ticket)
+      work_unit_3 = WorkUnit.make
+      WorkUnit.for_client(client).should == [work_unit_1, work_unit_2]
+      WorkUnit.for_client(client).include?(work_unit_3).should_not == true
+    end
+  end
+
+  describe 'email_list' do
+    it 'should return the proper list of contacts email_addresses for a given work unit' do
+      work_unit_1 = WorkUnit.make
+      ticket = work_unit_1.ticket
+      work_unit_2 = WorkUnit.make(:ticket => ticket)
+      client = work_unit_1.client
+      contact_1 = Contact.make(:receives_email => true, :client => client)
+      contact_2 = Contact.make(:receives_email => true, :client => client)
+      contact_3 = Contact.make(:receives_email => false, :client => client)
+      work_unit_3 = WorkUnit.make
+      proper_list = [contact_1.email_address, contact_2.email_address]
+      work_unit_1.email_list.should == proper_list
+    end
+  end
+
   describe 'while being created' do
     it 'should create a new work unit from the blueprint' do
       lambda do
@@ -95,6 +122,33 @@ describe WorkUnit do
       workunit = WorkUnit.new
       workunit.description = 'testing'
       workunit.to_s.should == 'testing'
+    end
+  end
+
+  describe '.allows_access?' do
+    before(:each) do
+      @user = User.make
+      @work_unit = WorkUnit.make
+      @project = @work_unit.project
+    end
+
+    it 'returns false if the user does not have access to the parent client' do
+      @work_unit.allows_access?(@user).should be_false
+    end
+
+    it 'returns true if the user has access to the parent client' do
+      @user.has_role!(:developer, @project)
+      @work_unit.allows_access?(@user).should be_true
+    end
+  end
+
+  describe '.validate_client_status' do
+    it 'checks to see if the client is not inactive' do
+      work_unit = WorkUnit.make_unsaved
+      client = work_unit.client
+      client.update_attribute(:status, "Inactive")
+      work_unit.save.should be_false
+      work_unit.should have(1).errors_on(:base)
     end
   end
 end

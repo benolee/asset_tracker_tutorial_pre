@@ -2,6 +2,7 @@ class WorkUnitsController < ApplicationController
   before_filter :handle_overtime_hours_type, :only => [:create]
   before_filter :load_new_work_unit, :only => [:new, :create]
   before_filter :load_work_unit, :only => [:show, :edit, :update]
+  before_filter :require_access
 
   protected
 
@@ -16,7 +17,7 @@ class WorkUnitsController < ApplicationController
     _params.delete :project_id
     @work_unit = WorkUnit.new(_params)
     @work_unit.user = current_user
-    @work_unit.scheduled_at ||= Time.zone.now
+    @work_unit.scheduled_at = Time.zone.parse(_params[:scheduled_at])
   end
 
   def load_work_unit
@@ -30,17 +31,24 @@ class WorkUnitsController < ApplicationController
 
   def create
     if @work_unit.save
+      suspended = @work_unit.client.status == "Suspended"
       if request.xhr?
-        render :json => "{\"success\": true}", :layout => false, :status => 200 and return
+        if suspended
+          render :json => "{\"success\": true, \"notice\": \"This client is suspended. Please contact an Administrator.\"}",
+                 :layout => false,
+                 :status => 200 and return
+        else
+          render :json => "{\"success\": true}", :layout => false, :status => 200 and return
+        end
       end
-      flash[:notice] = "Work Unit was created successfully."
+      flash[:notice] = t(:work_unit_created_successfully)
       redirect_to dashboard_path and return
     else
       if request.xhr?
         render :json => @work_unit.errors.full_messages.to_json, :layout => false, :status => 406 and return
       end
-      flash.now[:error] = "There was a problem creating the work unit"
-      render :action => :index and return
+      flash[:error] = t(:work_unit_created_unsuccessfully)
+      redirect_to dashboard_path and return
     end
   end
 
@@ -52,11 +60,20 @@ class WorkUnitsController < ApplicationController
 
   def update
     if @work_unit.update_attributes(params[:work_unit])
-      flash[:notice] = "WorkUnit updated."
+      flash[:notice] = t(:work_unit_updated_successfully)
       redirect_to @work_unit
     else
-      flash.now[:error] = "There was a problem updating the work_unit."
+      flash.now[:error] = t(:work_unit_updated_unsuccessfully)
       redirect_to edit_work_unit_path
+    end
+  end
+
+  private
+
+  def require_access
+    unless @work_unit.allows_access?(current_user)
+      flash[:notice] = "Access denied."
+      redirect_to root_path
     end
   end
 end

@@ -3,6 +3,7 @@ class ClientsController < ApplicationController
   before_filter :load_client, :only => [:edit, :show, :update]
   before_filter :load_file_attachments, :only => [:show, :new, :create]
   before_filter :require_admin, :only => [:edit, :new, :create]
+  before_filter :require_access, :except => [:index]
 
   protected
   def load_new_client
@@ -23,6 +24,7 @@ class ClientsController < ApplicationController
   end
 
   def show
+    @projects = Project.for_user(current_user).select{|p| p.client == @client}
   end
 
   def new
@@ -30,20 +32,20 @@ class ClientsController < ApplicationController
 
   def create
     if @client.save
-      flash[:notice] = "Client created successfully."
+      flash[:notice] = t(:client_created_successfully)
       redirect_to @client
     else
-      flash.now[:error] = "There was a problem saving the new client."
+      flash.now[:error] = t(:client_created_unsuccessfully)
       render :action => 'new'
     end
   end
 
   def update
     if @client.update_attributes(params[:client])
-      flash[:notice] = "Client updated successfully."
+      flash[:notice] = t(:client_updated_successfully)
       redirect_to @client
     else
-      flash.now[:error] = "There was a problem saving the client."
+      flash.now[:error] = t(:client_updated_unsuccessfully)
       render :action => 'edit'
     end
   end
@@ -51,4 +53,12 @@ class ClientsController < ApplicationController
   def edit
   end
 
+  private
+
+  def require_access
+    unless @client.allows_access?(current_user)
+      flash[:notice] = "Access denied."
+      redirect_to root_path
+    end
+  end
 end

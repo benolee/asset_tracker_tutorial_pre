@@ -3,7 +3,7 @@
     #error_explanation
       %h2
         = pluralize(@ticket.errors.count, "error")
-        prohibited this ticket from being saved:
+        = "#{t(:prohibited_this_ticket_from_being_saved)}:"
 
       %ul
       - @ticket.errors.full_messages.each do |msg|
@@ -12,7 +12,7 @@
   .field
     = f.label :name
     = f.text_field :name
-    = hidden_field_tag :project, @ticket.project.id
+    = hidden_field_tag :project_id, @ticket.project.id
   .actions
-    = f.submit
-
+    = f.submit :class => "add_new_button"
+    = link_to t(:cancel), url_for(@ticket.project), :class => "cancel_button"
