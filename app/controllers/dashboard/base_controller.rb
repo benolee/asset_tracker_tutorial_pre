@@ -3,18 +3,18 @@ class Dashboard::BaseController < ApplicationController
   respond_to :html, :json, :js
 
   def index
-    if current_user.work_units_for_day(Date.current.prev_working_day).empty? && !Rails.env.test?
+    unless current_user.work_units_for_day(Date.current.prev_working_day).any? || Rails.env.test? || admin?
       @message = {:title => t(:management),
         :body => t(:enter_time_for_previous_day)}
     end
 
-    @clients = Client.for_user current_user
-    @projects = Project.for_user current_user
-    @tickets = Ticket.for_user current_user
+    @clients = Client.for_user(current_user).sort_by{|c| c.name.downcase}
+    @projects = Project.for_user(current_user).sort_by{|p| p.name.downcase}
+    @tickets = Ticket.for_user(current_user).sort_by{|t| t.name.downcase}
   end
 
   def client
-    @projects = Project.find(:all, :conditions => ['client_id = ?', params[:id]])
+    @projects = Project.find(:all, :conditions => ['client_id = ?', params[:id]]).sort_by{|p| p.name.downcase}
     unless admin?
       @projects = @projects.select {|p| p.allows_access?(current_user)}
     end
@@ -22,7 +22,7 @@ class Dashboard::BaseController < ApplicationController
   end
 
   def project
-    @tickets = Ticket.find(:all, :conditions => ['project_id = ?', params[:id]])
+    @tickets = Ticket.find(:all, :conditions => ['project_id = ?', params[:id]]).sort_by{|t| t.name.downcase}
     unless admin?
       @tickets = @tickets.select {|t| t.allows_access?(current_user) }
     end

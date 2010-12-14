@@ -72,7 +72,7 @@ class WorkUnitsController < ApplicationController
 
   def require_access
     unless @work_unit.allows_access?(current_user)
-      flash[:notice] = "Access denied."
+      flash[:notice] = t(:access_denied)
       redirect_to root_path
     end
   end
