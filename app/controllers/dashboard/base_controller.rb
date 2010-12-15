@@ -14,7 +14,7 @@ class Dashboard::BaseController < ApplicationController
   end
 
   def client
-    @projects = Project.find(:all, :conditions => ['client_id = ?', params[:id]]).sort_by{|p| p.name.downcase}
+    @projects = Project.sort_by_name.find(:all, :conditions => ['client_id = ?', params[:id]])
     unless admin?
       @projects = @projects.select {|p| p.allows_access?(current_user)}
     end
@@ -22,7 +22,7 @@ class Dashboard::BaseController < ApplicationController
   end
 
   def project
-    @tickets = Ticket.find(:all, :conditions => ['project_id = ?', params[:id]]).sort_by{|t| t.name.downcase}
+    @tickets = Ticket.sort_by_name.find(:all, :conditions => ['project_id = ?', params[:id]])
     unless admin?
       @tickets = @tickets.select {|t| t.allows_access?(current_user) }
     end
