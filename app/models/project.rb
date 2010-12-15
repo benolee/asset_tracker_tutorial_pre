@@ -12,6 +12,8 @@ class Project < ActiveRecord::Base
   validates_presence_of :client_id
   validates_uniqueness_of :name, :scope => :client_id
 
+  scope :sort_by_name, order('name ASC')
+
   def uninvoiced_hours
     WorkUnit.for_project(self).not_invoiced.inject(0) {|sum, w| sum + w.hours}
   end
