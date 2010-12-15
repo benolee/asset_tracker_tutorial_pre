@@ -8,9 +8,9 @@ class Dashboard::BaseController < ApplicationController
         :body => t(:enter_time_for_previous_day)}
     end
 
-    @clients = Client.for_user(current_user).sort_by{|c| c.name.downcase}
-    @projects = Project.for_user(current_user).sort_by{|p| p.name.downcase}
-    @tickets = Ticket.for_user(current_user).sort_by{|t| t.name.downcase}
+    @clients = Client.sort_by_name.for_user(current_user)
+    @projects = Project.sort_by_name.for_user(current_user)
+    @tickets = Ticket.sort_by_name.for_user(current_user)
   end
 
   def client
