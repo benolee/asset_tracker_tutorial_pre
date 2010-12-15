@@ -11,6 +11,8 @@ class Client < ActiveRecord::Base
   validates_presence_of :status
   validates_uniqueness_of :name, :allow_nil => false
 
+  scope :sort_by_name, order('name ASC')
+
   def total_tickets
     projects.inject(0) {|sum, p| sum + p.tickets.count }
   end
