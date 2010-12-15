@@ -16,7 +16,7 @@
               %th= t(:client_role)
               %th= t(:no_roles)
             - Client.sort_by_name.each do |client|
-              - client.projects.sort_by{|p| p.name.downcase}.each do |project|
+              - Project.for_client(client).sort_by_name.each do |project|
                 %tr
                   %td= client
                   %td= project
