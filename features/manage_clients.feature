@@ -4,23 +4,17 @@ Feature: Client Management
 
   Scenario: List clients as non admin
     Given I am an authenticated user
-    Given the following clients:
-      |name|status|
-      |name 1|Active|
-      |name 2|Active|
-      |name 3|Active|
-      |name 4|Active|
+    And a client "client1" exists with name: "client1"
+    And a client "client2" exists with name: "client2"
+    And a project "project1" exists with client: client "client1"
+    And a project "project2" exists with client: client "client2"
+    And I am assigned to the project
     When I go to the clients page
-    Then I should see the following clients:
-      |Name|Initials|Projects|Tickets|Status|
-      |name 1||0|0|Active|
-      |name 2||0|0|Active|
-      |name 3||0|0|Active|
-      |name 4||0|0|Active|
+    Then I should see "client2" within ".clients"
     And I should not see a link with text "New Client"
 
   Scenario: List clients as non admin
-    Given I am an authenticated user with an "Admin" role
+    Given I am an authenticated user with an "admin" role
     Given the following clients:
       |name|status|
       |name 1|Active|
