@@ -8,13 +8,13 @@ class Dashboard::BaseController < ApplicationController
         :body => t(:enter_time_for_previous_day)}
     end
 
-    @clients = Client.for_user(current_user).sort_by{|c| c.name.downcase}
-    @projects = Project.for_user(current_user).sort_by{|p| p.name.downcase}
-    @tickets = Ticket.for_user(current_user).sort_by{|t| t.name.downcase}
+    @clients = Client.sort_by_name.for_user(current_user)
+    @projects = Project.sort_by_name.for_user(current_user)
+    @tickets = Ticket.sort_by_name.for_user(current_user)
   end
 
   def client
-    @projects = Project.find(:all, :conditions => ['client_id = ?', params[:id]]).sort_by{|p| p.name.downcase}
+    @projects = Project.sort_by_name.find(:all, :conditions => ['client_id = ?', params[:id]])
     unless admin?
       @projects = @projects.select {|p| p.allows_access?(current_user)}
     end
@@ -22,7 +22,7 @@ class Dashboard::BaseController < ApplicationController
   end
 
   def project
-    @tickets = Ticket.find(:all, :conditions => ['project_id = ?', params[:id]]).sort_by{|t| t.name.downcase}
+    @tickets = Ticket.sort_by_name.find(:all, :conditions => ['project_id = ?', params[:id]])
     unless admin?
       @tickets = @tickets.select {|t| t.allows_access?(current_user) }
     end

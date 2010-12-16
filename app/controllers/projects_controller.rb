@@ -25,7 +25,7 @@ class ProjectsController < ApplicationController
   public
 
   def show
-    @tickets = @project.tickets.sort_by{|ticket| ticket.name.downcase}
+    @tickets = Ticket.for_project(@project).sort_by_name
   end
 
   def new

@@ -25,7 +25,7 @@ class TicketsController < ApplicationController
   end
 
   def show
-    @work_units = @ticket.work_units.sort_by{|w| w.scheduled_at}.reverse
+    @work_units = WorkUnit.for_ticket(@ticket).sort_by_scheduled_at
   end
 
   def edit

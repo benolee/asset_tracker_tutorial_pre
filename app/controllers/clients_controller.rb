@@ -20,11 +20,11 @@ class ClientsController < ApplicationController
 
   public
   def index
-    @clients = Client.all.sort_by {|client| client.name.downcase}
+    @clients = Client.for_user current_user
   end
 
   def show
-    @projects = Project.for_user(current_user).select{|p| p.client == @client}.sort_by{|project| project.name.downcase}
+    @projects = Project.sort_by_name.for_client(@client).for_user(current_user)
   end
 
   def new
