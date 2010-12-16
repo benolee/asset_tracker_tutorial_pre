@@ -68,6 +68,18 @@ body {
       margin: 6px 0 0 0;
       li {
         list-style:none;
+        display:inline;
+        padding: 0 10px 0 0;
+        a {
+          text-decoration:none;
+          background:#dfdfdf;
+          padding: 5px 8px 5px 8px;
+          border:1px solid #b2b2b2;
+          &:hover {
+            background:#505050;
+            color:#ccc;
+          }
+        }  
       }
     }
     textarea {
@@ -76,6 +88,10 @@ body {
       }
     }
   }
+p.gravatar {
+  float:left;
+  padding: 0 10px 0 0;
+}
 
 .login_form {
   margin: 20px 0 10px 10px;
@@ -241,6 +257,16 @@ h4.dashboard_title {
     }
   }
 }
+
+.week_pagination {
+  .previous_week {
+    padding: 0 5px 0 0;
+  }
+  .next_week {
+    float:right;
+  }
+}
+
 .new_user .add_new_button {
   float:right;
   margin: 5px 10px 0 10px;   
