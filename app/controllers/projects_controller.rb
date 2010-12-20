@@ -5,7 +5,7 @@ class ProjectsController < ApplicationController
   access_control do
     allow :admin
     allow :developer, :of => :project
-    allow :client, :of => :project
+    allow :client, :of => :project, :to => [:show]
   end
 
   protected
