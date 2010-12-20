@@ -6,9 +6,10 @@
     .gradient_border_wrap
       .gradient_border_content
         %ul.subnav
-          %li= link_to t(:edit), edit_project_path
+          - show_to :admin, :developer do
+            %li= link_to t(:edit), edit_project_path
+            %li= link_to t(:new_ticket), new_ticket_path(:project_id => @project)
           %li= link_to "#{t(:back_to_client)}: #{@project.client}" , @project.client
-          %li= link_to t(:new_ticket), new_ticket_path(:project_id => @project)
 .yui3-g
   .yui3-u-1
     .gradient_border_wrap
@@ -21,7 +22,8 @@
               %th= t(:work_units)
               %th= t(:uninvoiced_hours)
               %th= t(:total_hours)
-              %th= t(:edit)
+              - show_to :admin, :developer do
+                %th= t(:edit)
           %tfoot
             %tr
               %th= t(:all_tickets)
@@ -36,7 +38,8 @@
                 %td= ticket.work_units.count
                 %td= ticket.uninvoiced_hours
                 %td= ticket.hours
-                %td= link_to t(:edit), edit_ticket_path(ticket)
+                - show_to :admin, :developer do
+                  %td= link_to t(:edit), edit_ticket_path(ticket)
 .yui3-g
   .yui3-u-1-2
     .gradient_border_wrap
