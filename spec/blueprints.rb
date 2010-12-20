@@ -15,6 +15,7 @@ Sham.define do
   description(:unique => false)         { Faker::Company.bs }
   hours(:unique => false)               { rand(12) + 1}
   scheduled_at(:unique => false)        { Time.now }
+  hours_type(:unique => false)          { ["Normal", "Overtime", "CTO", "PTO"][rand(4)] }
   # Contact
   email_address                                 { |index| "#{index}" + Faker::Internet.email }
   first_name(:unique => false)          { Faker::Name.first_name }
@@ -60,6 +61,7 @@ WorkUnit.blueprint do
   description
   hours
   scheduled_at
+  hours_type
 end
 
 WorkUnit.blueprint(:paid) do
