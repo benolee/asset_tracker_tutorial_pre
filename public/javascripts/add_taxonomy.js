@@ -87,6 +87,8 @@ $("#new_work_unit").submit(function() {
       me.effect("highlight");
       // Ask the calendar to update itself
       update_calendar_block();
+      $('#scheduled_at').datepicker('setDate', new Date());
+      $('#schedule_modal_link').text($('#scheduled_at').val());
     },
     error: function(result)
     {
