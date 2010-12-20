@@ -26,8 +26,8 @@
       = collection_select("work_unit", "ticket_id", @tickets, "id", "name", { :prompt => t(:select_a_ticket) })
 
     .work_unit_field
-      %label{:for => "hours_type"}= "#{t(:type)}:"
-      = select_tag('hours_type', options_for_select(['Normal', 'Overtime']))
+      %label{:for => "work_unit_hours_type"}= "#{t(:type)}:"
+      = select_tag("hours_type", options_for_select(['Normal', 'Overtime', 'CTO', 'PTO']))
 
     .work_unit_field
       %label{:for => "work_unit_hours"}= "#{t(:hours).capitalize}:"
