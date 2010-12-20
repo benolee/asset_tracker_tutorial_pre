@@ -7,8 +7,7 @@ class Client < ActiveRecord::Base
   has_many :file_attachments
   has_many :contacts
 
-  validates_presence_of :name
-  validates_presence_of :status
+  validates_presence_of :name, :status
   validates_uniqueness_of :name, :allow_nil => false
 
   scope :sort_by_name, order('name ASC')
