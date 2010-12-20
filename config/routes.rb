@@ -1,11 +1,7 @@
 AssetTrackerTutorial::Application.routes.draw do
   root :to => "dashboard/base#index"
 
-  devise_for :users do
-    get 'login', :to => 'devise/sessions#new'
-    post 'login', :to => 'devise/sessions#create'
-    get 'logout', :to => 'devise/sessions#destroy'
-  end
+  devise_for :users, :path => '/', :path_names => { :sign_in => 'login', :sign_out => 'logout' }
 
   namespace :admin do
     resources :invoices
