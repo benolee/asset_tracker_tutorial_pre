@@ -3,6 +3,12 @@ class WorkUnitsController < ApplicationController
   before_filter :load_work_unit, :only => [:show, :edit, :update]
   before_filter :require_access
 
+  access_control do
+    allow :admin
+    allow :developer, :of => :project
+    allow :client, :of => :project, :to => :show
+  end
+
   protected
 
   def load_new_work_unit
