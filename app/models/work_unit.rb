@@ -4,11 +4,7 @@ class WorkUnit < ActiveRecord::Base
   has_many :comments, :as => :commentable
   belongs_to :ticket
   belongs_to :user
-  validates_presence_of :ticket_id
-  validates_presence_of :user_id
-  validates_presence_of :description
-  validates_presence_of :hours
-  validates_presence_of :scheduled_at
+  validates_presence_of :ticket_id, :user_id, :description, :hours, :scheduled_at
 
   scope :scheduled_between, lambda{|start_time, end_time| where('scheduled_at BETWEEN ? AND ?', start_time, end_time) }
   scope :unpaid, lambda{ where('paid IS NULL or paid = ""') }
@@ -16,7 +12,7 @@ class WorkUnit < ActiveRecord::Base
   scope :for_client, lambda{|client| joins({:ticket => {:project => [:client]}}).where("clients.id = ?", client.id) }
   scope :for_project, lambda{|project| joins({:ticket => [:project]}).where("projects.id = ?", project.id)}
   scope :for_ticket, lambda {|ticket| where('ticket_id = ?', ticket.id) }
-  scope :for_user, lambda{ |user| where('user_id = ?', user.id)}
+  scope :for_user, lambda{|user| where('user_id = ?', user.id)}
   scope :sort_by_scheduled_at, order('scheduled_at DESC')
 
   after_validation :validate_client_status
@@ -66,7 +62,7 @@ class WorkUnit < ActiveRecord::Base
 
   def hours
     if read_attribute(:hours)
-      overtime ? (read_attribute(:hours) * BigDecimal.new("1.5")) : read_attribute(:hours)
+      (hours_type == "Overtime") ? (read_attribute(:hours) * BigDecimal.new("1.5")) : read_attribute(:hours)
     else
       read_attribute(:hours)
     end
@@ -75,4 +71,5 @@ class WorkUnit < ActiveRecord::Base
   def allows_access?(user)
     project.accepts_roles_by?(user) || user.has_role?(:admin)
   end
+
 end
