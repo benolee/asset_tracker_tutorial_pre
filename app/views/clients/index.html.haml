@@ -13,7 +13,7 @@
               %th= t(:projects)
               %th= t(:tickets)
               %th= t(:status)
-              -if admin?
+              - show_to :admin do
                 %th= t(:edit)
           %tbody
             - @clients.each do |client|
