@@ -27,9 +27,9 @@
             %tfoot
               %tr
                 %th= t(:all_projects)
-                %th= @client.total_tickets
+                %th= @client.tickets.count
                 %th= @client.uninvoiced_hours
-                %th= @client.total_hours
+                %th= @client.hours
             %tbody
               - @projects.each do |project|
                 %tr

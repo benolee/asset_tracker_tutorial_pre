@@ -12,11 +12,11 @@ class Client < ActiveRecord::Base
 
   scope :sort_by_name, order('name ASC')
 
-  def total_tickets
-    projects.inject(0) {|sum, p| sum + p.tickets.count }
+  def tickets
+    Ticket.for_client(self)
   end
 
-  def total_hours
+  def hours
     projects.inject(0){|sum, p| sum + p.hours}
   end
 
