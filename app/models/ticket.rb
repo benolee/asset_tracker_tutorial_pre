@@ -8,6 +8,7 @@ class Ticket < ActiveRecord::Base
   validates_presence_of :project_id
   validates_presence_of :name
 
+  scope :for_client, lambda{|client| joins({:project => [:client]}).where("clients.id = ?", client.id) }
   scope :for_project, lambda {|project| where('project_id = ?', project.id) }
   scope :sort_by_name, order('name ASC')
 

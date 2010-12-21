@@ -16,12 +16,16 @@ class Client < ActiveRecord::Base
     Ticket.for_client(self)
   end
 
+  def work_units
+    WorkUnit.for_client(self)
+  end
+
   def hours
-    projects.inject(0){|sum, p| sum + p.hours}
+    work_units.map(&:hours).sum
   end
 
   def uninvoiced_hours
-    WorkUnit.for_client(self).not_invoiced.inject(0) {|sum, w| sum + w.hours}
+    work_units.where(:invoiced => nil).map(&:hours).sum
   end
 
   def to_s
