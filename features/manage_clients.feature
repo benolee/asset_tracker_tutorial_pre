@@ -73,7 +73,7 @@ Feature: Client Management
   Scenario: Register new client as a non admin
     Given I am an authenticated user
     And I am on the new client page
-    Then I should see "You must be an admin to do that."
+    Then I should see "Access denied."
 
   Scenario: Register new client as an admin
     Given I am an authenticated user with an "Admin" role
