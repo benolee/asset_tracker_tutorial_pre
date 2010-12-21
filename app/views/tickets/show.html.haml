@@ -6,7 +6,7 @@
     .gradient_border_wrap
       .gradient_border_content
         %ul.subnav
-          - show_to :admin, :developer do
+          - if admin? || current_user.has_role?(:developer, @ticket.project)
             %li= link_to t(:edit), edit_ticket_path
           %li= link_to "#{t(:back_to_project)}: #{@ticket.project}", project_path(@ticket.project)
           %li= link_to "#{t(:back_to_client)}: #{@ticket.client}", client_path(@ticket.project.client)
