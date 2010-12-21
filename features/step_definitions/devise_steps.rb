@@ -15,8 +15,7 @@ Given /^I am an authenticated user$/ do
   password = 'secretpass'
 
   Given %{I have one user "#{email}" with password "#{password}" and login "#{login}"}
-  visit('/users/sign_in')
-#  And %{I go to login}
+  visit('/login')
   And %{I fill in "user_email" with "#{email}"}
   And %{I fill in "user_password" with "#{password}"}
   And %{I press "Sign in"}
@@ -26,7 +25,7 @@ Given /^I am an authenticated user "([^"]*)" and password "([^"]*)"$/ do |login,
   email = login
 
   Given %{I have one user "#{email}" with password "#{password}" and login "#{login}"}
-  visit('/users/sign_in')
+  visit('/login')
   And %{I fill in "user_email" with "#{email}"}
   And %{I fill in "user_password" with "#{password}"}
   And %{I press "Sign in"}
@@ -41,7 +40,7 @@ Given /^I am an authenticated user with an+ "([^\"]*)" role$/ do |role|
   u = User.find_by_email(email)
   u.has_role!(role)
 
-  visit('/users/sign_in')
+  visit('/login')
 #  And %{I go to login}
   And %{I fill in "user_email" with "#{email}"}
   And %{I fill in "user_password" with "#{password}"}

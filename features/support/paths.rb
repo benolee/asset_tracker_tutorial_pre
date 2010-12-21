@@ -15,7 +15,7 @@ module NavigationHelpers
       client_contacts_path
 
     when /^the login page$/
-      '/users/sign_in'
+      '/login'
 
     when /path "(.+)"/  
       $1  
