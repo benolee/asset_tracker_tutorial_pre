@@ -14,6 +14,7 @@
               %th= "#{t(:locked)}?"
               %th= t(:roles)
               %th= t(:edit)
+              %th= t(:pto_left)
           %tbody
             - @users.each do |user|
               %tr
@@ -29,4 +30,5 @@
                   - else
                     = link_to t(:roles), projects_admin_user_path(user)
                 %td= link_to t(:edit), edit_admin_user_path(user)
+                %td= user.pto_hours_left(Date.current.to_s)
         = link_to t(:new_user), new_admin_user_path, :class => "add_new_button"
