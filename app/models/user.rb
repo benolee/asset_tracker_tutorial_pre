@@ -54,4 +54,8 @@ class User < ActiveRecord::Base
     locked_at?
   end
 
+  def pto_hours_left(year)
+    time = Time.parse(year+'-01-01') || Time.parse(year)
+    BigDecimal.new("40") - work_units.pto.scheduled_between(time.beginning_of_year, time.end_of_year).sum(:hours)
+  end
 end
