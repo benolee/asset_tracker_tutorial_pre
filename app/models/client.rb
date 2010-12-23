@@ -11,6 +11,7 @@ class Client < ActiveRecord::Base
   validates_uniqueness_of :name, :allow_nil => false
 
   scope :sort_by_name, order('name ASC')
+  scope :not_inactive, where('status = "10" OR status = "20"')
 
   def tickets
     Ticket.for_client(self)
@@ -21,7 +22,7 @@ class Client < ActiveRecord::Base
   end
 
   def hours
-    work_units.map(&:hours).sum
+    work_units.sum(:effective_hours)
   end
 
   def uninvoiced_hours
