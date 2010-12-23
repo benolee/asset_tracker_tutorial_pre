@@ -71,7 +71,7 @@ class WorkUnit < ActiveRecord::Base
 
   def set_effective_hours!
     if hours
-      if overtime?
+      if hours_type == "Overtime"
         self.effective_hours = hours * BigDecimal.new("1.5")
       else
         self.effective_hours = hours
