@@ -18,6 +18,6 @@
           - @clients.each do |client|
             %tr
               %td= link_to client, admin_invoice_path(client)
-              %td= @work_units.select{|w| w.client == client}.count
-              %td= @work_units.select{|w| w.client == client}.sum(:effective_hours)
+              %td= @work_units.for_client(client).count
+              %td= @work_units.for_client(client).sum(:effective_hours)
 
