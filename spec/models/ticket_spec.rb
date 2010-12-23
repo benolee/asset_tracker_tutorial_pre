@@ -54,7 +54,7 @@ describe Ticket do
         work_unit_3 = WorkUnit.make(
           :ticket => ticket,
           :paid => 'paid on 2010-10-25')
-        unpaid_hours = work_unit_1.hours + work_unit_2.hours
+        unpaid_hours = work_unit_1.effective_hours + work_unit_2.effective_hours
         ticket.unpaid_hours.should == unpaid_hours
       end
     end
@@ -69,7 +69,7 @@ describe Ticket do
         work_unit_3 = WorkUnit.make(
           :ticket => ticket,
           :invoiced => 'invoiced on 2010-10-25' )
-        uninvoiced_hours = work_unit_1.hours + work_unit_2.hours
+        uninvoiced_hours = work_unit_1.effective_hours + work_unit_2.effective_hours
         ticket.uninvoiced_hours.should == uninvoiced_hours
       end
     end
