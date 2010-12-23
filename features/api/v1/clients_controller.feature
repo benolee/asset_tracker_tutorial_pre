@@ -2,6 +2,7 @@ Feature: API - V1 - Client Management
   As a user
   I should be able to manage clients through an API
 
+  @wip
   Scenario: List clients
     Given I am an authenticated user
     Given the following clients:
@@ -37,6 +38,7 @@ Feature: API - V1 - Client Management
       ]
       """
 
+  @wip
   Scenario: Show client
     Given I am an authenticated user
     Given the following clients:
