@@ -87,7 +87,7 @@ describe Client do
       client = work_unit_1.client
       work_unit_2 = WorkUnit.make(:ticket => ticket)
       work_unit_3 = WorkUnit.make(:ticket => ticket, :invoiced => 'Invoiced', :invoiced_at => Time.current)
-      total_hours = work_unit_1.hours + work_unit_2.hours
+      total_hours = work_unit_1.effective_hours + work_unit_2.effective_hours
       client.uninvoiced_hours.should == total_hours
     end
   end
