@@ -43,4 +43,4 @@ Feature: Payroll report
     When I go to the admin payroll show page for the user
     And I fill in "autofill_all" with "123"
     And I press "Submit"
-    Then I should see "Total For Pay Period: 0 Hours"
+    Then I should see "Total For Pay Period: 0.0 Hours"

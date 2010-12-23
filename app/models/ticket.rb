@@ -24,11 +24,11 @@ class Ticket < ActiveRecord::Base
   end
 
   def unpaid_hours
-    work_units.unpaid.inject(0) { |sum, n| sum + n.hours }
+    work_units.unpaid.sum(:effective_hours)
   end
 
   def uninvoiced_hours
-    work_units.not_invoiced.inject(0) { |sum, n| sum + n.hours }
+    work_units.not_invoiced.sum(:effective_hours)
   end
 
   def long_name
@@ -40,7 +40,7 @@ class Ticket < ActiveRecord::Base
   end
 
   def hours
-    work_units.inject(0) {|sum, w| sum + w.hours}
+    work_units.sum(:effective_hours)
   end
 
 end

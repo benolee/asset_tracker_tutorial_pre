@@ -22,7 +22,7 @@ class Client < ActiveRecord::Base
   end
 
   def uninvoiced_hours
-    WorkUnit.for_client(self).not_invoiced.inject(0) {|sum, w| sum + w.hours}
+    WorkUnit.for_client(self).not_invoiced.sum(:effective_hours)
   end
 
   def to_s

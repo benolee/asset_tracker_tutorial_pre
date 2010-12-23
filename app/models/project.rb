@@ -16,11 +16,11 @@ class Project < ActiveRecord::Base
   scope :for_client, lambda {|client| where('client_id = ?', client.id) }
 
   def uninvoiced_hours
-    WorkUnit.for_project(self).not_invoiced.inject(0) {|sum, w| sum + w.hours}
+    WorkUnit.for_project(self).not_invoiced.sum(:effective_hours)
   end
 
   def total_hours
-    WorkUnit.for_project(self).inject(0) {|sum, w| sum + w.hours}
+    WorkUnit.for_project(self).sum(:effective_hours)
   end
 
   def total_work_units

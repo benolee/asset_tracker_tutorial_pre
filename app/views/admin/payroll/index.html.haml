@@ -14,10 +14,10 @@
           %tfoot
             %th= t(:total)
             %th= @work_units.count
-            %th= @work_units.inject(0){|s,w| s+w.hours}
+            %th= @work_units.sum(:effective_hours)
           - @users.each do |user|
             %tr
               %td= link_to user, admin_payroll_path(user)
               %td= user.unpaid_work_units.count
-              %td= user.unpaid_work_units.inject(0){|s,w| s+w.hours}
+              %td= user.unpaid_work_units.sum(:effective_hours)
 

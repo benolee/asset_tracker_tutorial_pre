@@ -14,10 +14,10 @@
           %tfoot
             %th= t(:total)
             %th= @work_units.count
-            %th= @work_units.inject(0){|s,w| s + w.hours}
+            %th= @work_units.sum(:effective_hours)
           - @clients.each do |client|
             %tr
               %td= link_to client, admin_invoice_path(client)
               %td= @work_units.select{|w| w.client == client}.count
-              %td= @work_units.select{|w| w.client == client}.inject(0){|s,w| s + w.hours}
+              %td= @work_units.select{|w| w.client == client}.sum(:effective_hours)
 
