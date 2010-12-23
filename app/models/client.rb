@@ -25,7 +25,7 @@ class Client < ActiveRecord::Base
   end
 
   def uninvoiced_hours
-    work_units.where(:invoiced => nil).map(&:hours).sum
+    WorkUnit.for_client(self).not_invoiced.sum(:effective_hours)
   end
 
   def to_s

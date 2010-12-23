@@ -4,7 +4,7 @@ class WorkUnit < ActiveRecord::Base
   has_many :comments, :as => :commentable
   belongs_to :ticket
   belongs_to :user
-  validates_presence_of :ticket_id, :user_id, :description, :hours, :scheduled_at
+  validates_presence_of :ticket_id, :user_id, :description, :hours, :scheduled_at, :effective_hours
 
   scope :scheduled_between, lambda{|start_time, end_time| where('scheduled_at BETWEEN ? AND ?', start_time, end_time) }
   scope :unpaid, lambda{ where('paid IS NULL or paid = ""') }
@@ -19,6 +19,7 @@ class WorkUnit < ActiveRecord::Base
   scope :overtime, where('hours_type = "Overtime"')
   scope :normal, where('hours_type = "Normal"')
 
+  before_validation :set_effective_hours!
   after_validation :validate_client_status
   after_save :send_email!
 
@@ -64,16 +65,18 @@ class WorkUnit < ActiveRecord::Base
     description
   end
 
-  def hours
-    if read_attribute(:hours)
-      (hours_type == "Overtime") ? (read_attribute(:hours) * BigDecimal.new("1.5")) : read_attribute(:hours)
-    else
-      read_attribute(:hours)
-    end
-  end
-
   def allows_access?(user)
     project.accepts_roles_by?(user) || user.has_role?(:admin)
+  end
+
+  def set_effective_hours!
+    if hours
+      if overtime?
+        self.effective_hours = hours * BigDecimal.new("1.5")
+      else
+        self.effective_hours = hours
+      end
+    end
   end
 
 end

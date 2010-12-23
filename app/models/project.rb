@@ -19,16 +19,16 @@ class Project < ActiveRecord::Base
     select {|p| p.allows_access?(user) }
   end
 
-  def work_units
-    WorkUnit.for_project(self)
+  def uninvoiced_hours
+    WorkUnit.for_project(self).not_invoiced.sum(:effective_hours)
   end
 
   def hours
-    work_units.map(&:hours).sum
+    WorkUnit.for_project(self).sum(:effective_hours)
   end
 
-  def uninvoiced_hours
-    work_units.where(:invoiced => nil).map(&:hours).sum
+  def work_units
+    WorkUnit.for_project(self)
   end
 
   def to_s

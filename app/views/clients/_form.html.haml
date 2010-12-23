@@ -7,13 +7,14 @@
       %ul
       - @client.errors.full_messages.each do |msg|
         %li= msg
-  .field
+
+  .work_unit_field
     = f.label :name
     = f.text_field :name
-  .field
+  .work_unit_field
     = f.label :initials
     = f.text_field :initials
-  .field
+  .work_unit_field
     = f.label :status
     = f.select :status, client_status_select(@client.status)
   .actions

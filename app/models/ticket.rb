@@ -26,15 +26,15 @@ class Ticket < ActiveRecord::Base
   end
 
   def hours
-    work_units.map(&:hours).sum
+    work_units.sum(:effective_hours)
   end
 
   def unpaid_hours
-    work_units.where(:paid => nil).map(&:hours).sum
+    work_units.unpaid.sum(:effective_hours)
   end
 
   def uninvoiced_hours
-    work_units.where(:invoiced => nil).map(&:hours).sum
+    work_units.not_invoiced.sum(:effective_hours)
   end
 
   def long_name
