@@ -57,7 +57,7 @@ describe Project do
       ticket_2 = Ticket.make(:project => project)
       WorkUnit.make(:ticket => ticket_1)
       WorkUnit.make(:ticket => ticket_2)
-      project.hours.should == ticket_1.work_units.first.hours + ticket_2.work_units.first.hours
+      project.hours.should == ticket_1.work_units.first.effective_hours + ticket_2.work_units.first.effective_hours
     end
   end
 
@@ -68,7 +68,7 @@ describe Project do
       project = work_unit_1.project
       work_unit_2 = WorkUnit.make(:ticket => ticket)
       work_unit_3 = WorkUnit.make(:ticket => ticket, :invoiced => 'Invoiced', :invoiced_at => Time.current)
-      total_hours = work_unit_1.hours + work_unit_2.hours
+      total_hours = work_unit_1.effective_hours + work_unit_2.effective_hours
       project.uninvoiced_hours.should == total_hours
     end
   end
