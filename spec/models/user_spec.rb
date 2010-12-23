@@ -165,5 +165,31 @@ describe User do
 
   end
 
+  describe '.pto_hours_left' do
+    before(:each) do
+      @user = User.make
+      @work_unit = WorkUnit.make(:user => @user, :scheduled_at => '2010-01-01')
+    end
+
+    context 'when the user has used no PTO hours for the year' do
+      it 'should return 40 hours' do
+        @user.pto_hours_left('2010').should == 40
+      end
+    end
+
+    context 'when the user has used PTO hours for the year' do
+      it 'should return the remaining PTO hours for the user' do
+        work_unit2 = WorkUnit.make(:user => @user, :scheduled_at => '2010-01-01', :hours_type => 'PTO', :hours => '3.0')
+        @user.pto_hours_left('2010').should == 37
+      end
+
+      it 'should not subtract hours for another year' do
+        work_unit2 = WorkUnit.make(:user => @user, :scheduled_at => '2009-01-01', :hours_type => 'PTO', :hours => '3.0')
+        @user.pto_hours_left('2010').should == 40
+      end
+    end
+  end
+
   it 'methods should still work with other time zones'
+
 end
