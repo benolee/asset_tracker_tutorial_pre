@@ -229,10 +229,10 @@
       var selected = this.results[this.selectedIndex];
       if (selected) {
         this.input.val(selected.name);
-        this.hidden.val(selected.value);
+        this.hidden.val(selected.value).change();
         this.picked = true;
       } else if (this.settings.allowMismatch) {
-        this.hidden.val("");
+        this.hidden.val("").change();
       } else {
         this.reset();
       }

@@ -15,11 +15,11 @@
 
     .work_unit_field
       %label{:for => "work_unit_client_id"}= "#{t(:client)}:"
-      = collection_select("work_unit", "client_id", @clients, "id", "name", { :prompt => t(:select_a_client) }, { :class => "flexselect" })
+      = collection_select("work_unit", "client_id", @clients, "id", "name", { :prompt => "" }, { :class => "flexselect" })
 
     .work_unit_field
       %label{:for => "work_unit_project_id"}= "#{t(:project)}:"
-      = collection_select("work_unit", "project_id", @projects, "id", "name", { :prompt => t(:select_a_project) })
+      = collection_select("work_unit", "project_id", @projects, "id", "name", { :prompt => "" }, { :class => "flexselect" })
 
     .work_unit_field
       %label{:for => "work_unit_ticket_id"}= "#{t(:ticket)}:"
