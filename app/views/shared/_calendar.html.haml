@@ -21,6 +21,6 @@
                     = link_to "#{work_unit.client.initials}: #{work_unit.effective_hours}", work_unit_path(work_unit), { :title => work_unit.description }
         %td
           %ul
-            %li= "#{t(:current)}: #{user.unpaid_work_units.sum(:hours)}"
-            %li= "#{t(:pto_left)}: #{user.pto_hours_left(start_date.to_s)}"
+            %li#current_hours= "#{t(:current)}: #{user.unpaid_work_units.sum(:effective_hours)}"
+            %li#pto_left= "#{t(:pto_left)}: #{user.pto_hours_left(start_date.to_s)}"
 
