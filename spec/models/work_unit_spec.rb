@@ -151,4 +151,41 @@ describe WorkUnit do
       work_unit.should have(1).errors_on(:base)
     end
   end
+
+  describe '.set_effective_hours!' do
+    context 'when saving an overtime work unit' do
+      it 'applies the overtime_multiplier' do
+        work_unit = WorkUnit.make(:hours => 2.0, :hours_type => "Overtime")
+        work_unit.project.overtime_multiplier = 1.5
+        work_unit.save
+        work_unit.effective_hours.should == 3.0
+      end
+    end
+    context 'when saving a normal work_unit' do
+      it 'does not apply the overtime multiplier' do
+        work_unit = WorkUnit.make(:hours => 2.0, :hours_type => "Normal")
+        work_unit.project.overtime_multiplier = 1.5
+        work_unit.save
+        work_unit.effective_hours.should == 2.0
+      end
+    end
+    context 'when the client and project overtime_multiplier differ' do
+      it 'should apply the overtime multiplier for the project' do
+        work_unit = WorkUnit.make(:hours => 2.0, :hours_type => "Overtime")
+        work_unit.project.overtime_multiplier = 2.0
+        work_unit.client.overtime_multiplier = 1.5
+        work_unit.save
+        work_unit.effective_hours.should == 4.0
+      end
+    end
+    context 'with a client overtime_multiplier but no project overtime_multiplier' do
+      it 'should apply the client overtime multiplier' do
+        work_unit = WorkUnit.make(:hours => 2.0, :hours_type => "Overtime")
+        work_unit.project.overtime_multiplier = nil
+        work_unit.client.overtime_multiplier = 1.5
+        work_unit.save
+        work_unit.effective_hours.should == 3.0
+      end
+    end
+  end
 end
