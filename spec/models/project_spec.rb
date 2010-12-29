@@ -75,17 +75,23 @@ describe Project do
 
   describe '#for_user' do
     context 'when a user is assigned to a project' do
-      it 'returns the clients of the projects to which the user is assigned' do
+      it 'returns the projects to which the user is assigned' do
         user = User.make
         project1 = Project.make
         project2 = Project.make
-        client1 = project1.client
-        client2 = project2.client
         user.has_no_roles_for!(project2)
         user.has_role!(:developer, project1)
-        Client.for_user(user).include?(client1).should be_true
-        Client.for_user(user).include?(client2).should be_false
+        Project.for_user(user).include?(project1).should be_true
+        Project.for_user(user).include?(project2).should be_false
       end
+    end
+  end
+
+  describe '.work_units' do
+    it 'returns the children work units for that project' do
+      work_unit = WorkUnit.make
+      project = work_unit.ticket.project
+      project.work_units.should == [work_unit]
     end
   end
 end
