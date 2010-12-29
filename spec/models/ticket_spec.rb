@@ -108,6 +108,22 @@ describe Ticket do
       @user.has_role!(:developer, @project)
       @ticket.allows_access?(@user).should be_true
     end
+  end
 
+  describe '#for_user' do
+    context 'when a user has access to a project' do
+      it 'should return a collection of tickets for all the projects to which the user is assigned' do
+        user = User.make
+        project1 = Project.make
+        user.has_role!(:developer, project1)
+        project2 = Project.make
+        ticket1 = Ticket.make(:project => project1)
+        ticket2 = Ticket.make(:project => project1)
+        ticket3 = Ticket.make(:project => project2)
+        Ticket.for_user(user).include?(ticket1).should be_true
+        Ticket.for_user(user).include?(ticket2).should be_true
+        Ticket.for_user(user).include?(ticket3).should be_false
+      end
+    end
   end
 end
