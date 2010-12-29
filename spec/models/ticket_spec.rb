@@ -126,4 +126,17 @@ describe Ticket do
       end
     end
   end
+
+  describe '.hours' do
+    context 'when there are normal work units with hours' do
+      it 'should return the correct sum of hours for those work units' do
+        ticket1 = Ticket.make
+        ticket2 = Ticket.make
+        work_unit1 = WorkUnit.make(:ticket => ticket1, :hours => '1.0', :hours_type => 'Normal')
+        work_unit2 = WorkUnit.make(:ticket => ticket1, :hours => '1.0', :hours_type => 'Normal')
+        work_unit3 = WorkUnit.make(:ticket => ticket2, :hours => '1.0', :hours_type => 'Normal')
+        ticket1.hours.should == 2.0
+      end
+    end
+  end
 end
