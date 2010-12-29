@@ -16,7 +16,7 @@
             %th= @work_units.count
             %th= @work_units.sum(:effective_hours)
           - @users.each do |user|
-            %tr
+            %tr{ :class => cycle("odd", "even") }
               %td= link_to user, admin_payroll_path(user)
               %td= user.unpaid_work_units.count
               %td= user.unpaid_work_units.sum(:effective_hours)

@@ -17,7 +17,7 @@
                 %th= t(:edit)
           %tbody
             - @clients.each do |client|
-              %tr
+              %tr{ :class => cycle("odd", "even") }
                 %td= link_to client, client
                 %td= client.initials
                 %td= client.projects.count

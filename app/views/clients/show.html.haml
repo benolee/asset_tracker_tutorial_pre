@@ -32,7 +32,7 @@
                 %th= @client.hours
             %tbody
               - @projects.each do |project|
-                %tr
+                %tr{ :class => cycle("odd", "even") }
                   %td= link_to project, project
                   %td= project.tickets.count
                   %td= project.uninvoiced_hours
