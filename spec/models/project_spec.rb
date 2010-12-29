@@ -72,4 +72,21 @@ describe Project do
       project.uninvoiced_hours.should == total_hours
     end
   end
+
+  describe '#for_user' do
+    context 'when a user is assigned to a project' do
+      it 'returns the clients of the projects to which the user is assigned' do
+        user = User.make
+        project1 = Project.make
+        project2 = Project.make
+        client1 = project1.client
+        client2 = project2.client
+        user.has_no_roles_for!(project2)
+        user.has_role!(:developer, project1)
+        Client.for_user(user).include?(client1).should be_true
+        Client.for_user(user).include?(client2).should be_false
+      end
+    end
+  end
 end
+

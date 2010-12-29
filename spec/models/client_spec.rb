@@ -91,4 +91,17 @@ describe Client do
       client.uninvoiced_hours.should == total_hours
     end
   end
+
+  describe '.hours' do
+    context 'when there are normal work units with hours' do
+      it 'should return the correct sum of hours for those work units' do
+        work_unit1 = WorkUnit.make(:hours => '1.0', :hours_type => 'Normal')
+        client1 = work_unit1.client
+        work_unit2 = WorkUnit.make(:hours => '1.0', :hours_type => 'Normal', :ticket => work_unit1.ticket)
+        work_unit3 = WorkUnit.make(:hours => '1.0', :hours_type => 'Normal')
+        client1.hours.should == 2.0
+      end
+    end
+  end
 end
+
