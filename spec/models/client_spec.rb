@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Client do
+  before { @client = Client.make(:name => 'New Client', :status => 'Active') }
 
   it { should have_many :projects }
   it { should have_many(:tickets).through(:projects) }
@@ -10,21 +11,13 @@ describe Client do
 
   it { should validate_presence_of :name }
   it { should validate_presence_of :status }
-
-  it { Client.make; should validate_uniqueness_of :name }
-
-  describe 'while being created' do
-    it 'should create a new client from the blueprint' do
-      lambda do
-        Client.make
-      end.should change(Client, :count).by(1)
-    end
-  end
+  it { should validate_uniqueness_of :name }
 
   describe '.to_s' do
-    it 'returns the client name as a string' do
-      client = Client.make(:name => 'Testclient')
-      client.to_s.should == 'Testclient'
+    subject { @client.to_s }
+
+    it 'returns the client name' do
+      should == 'New Client'
     end
   end
 
@@ -122,5 +115,14 @@ describe Client do
       end
     end
   end
+
+  describe 'while being created' do
+    it 'should create a new client from the blueprint' do
+      lambda do
+        Client.make
+      end.should change(Client, :count).by(1)
+    end
+  end
+
 end
 
