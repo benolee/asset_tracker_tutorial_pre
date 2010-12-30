@@ -38,14 +38,19 @@ describe Client do
   end
 
   describe '.uninvoiced_hours' do
-    it "returns the sum of hours on all the client's work units" do
-      work_unit_1 = WorkUnit.make
-      ticket = work_unit_1.ticket
-      client = work_unit_1.client
-      work_unit_2 = WorkUnit.make(:ticket => ticket)
-      work_unit_3 = WorkUnit.make(:ticket => ticket, :invoiced => 'Invoiced', :invoiced_at => Time.current)
-      total_hours = work_unit_1.effective_hours + work_unit_2.effective_hours
-      client.uninvoiced_hours.should == total_hours
+    let(:project) { Project.make(:client => client) }
+    let(:ticket)  { Ticket.make(:project => project) }
+    subject { client.uninvoiced_hours }
+
+    context 'when there are uninvoiced work units' do
+      before do
+        work_unit1 = WorkUnit.make(:ticket => ticket, :hours => 1, :hours_type => 'Normal')
+        work_unit2 = WorkUnit.make(:ticket => ticket, :hours => 1, :hours_type => 'Normal')
+      end
+
+      it 'returns the sum of the hours on those work units' do
+        should == 2
+      end
     end
   end
 
