@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe Client do
-  before { @client = Client.make(:name => 'New Client', :status => 'Active') }
+  let(:client) { Client.make(:name => 'New Client', :status => 'Active') }
+  subject { client }
 
   it { should have_many :projects }
   it { should have_many(:tickets).through(:projects) }
@@ -14,27 +15,25 @@ describe Client do
   it { should validate_uniqueness_of :name }
 
   describe '.to_s' do
-    subject { @client.to_s }
-
+    subject { client.to_s }
     it 'returns the client name' do
       should == 'New Client'
     end
   end
 
   describe '.allows_access?' do
-    before(:each) do
-      @project = Project.make
-      @client = @project.client
-      @user = User.make
+    let(:user) { User.make }
+    let(:project) { Project.make(:client => client) }
+    subject { client.allows_access?(user) }
+
+    context 'when the user has access to one or more of its projects' do
+      before { user.has_role!(:developer, project) }
+      it { should be_true }
     end
 
-    it 'returns false given a user that has no access to any of its projects' do
-      @client.allows_access?(@user).should be_false
-    end
-
-    it 'returns true given a user has access to one or more of its projects' do
-      @user.has_role!(:developer, @project)
-      @client.allows_access?(@user).should be_true
+    context 'when the user has access to none of its projects' do
+      before { user.has_no_roles_for!(project) }
+      it { should be_false }
     end
   end
 
