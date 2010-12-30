@@ -133,5 +133,29 @@ describe Client do
       end
     end
   end
+
+  describe '.for' do
+    context 'given a collection of projects' do
+      it 'returns a unique list of clients for those projects' do
+        projects = [project1 = Project.make, project2 = Project.make]
+        Client.for(projects).include?(project1.client).should be_true
+        Client.for(projects).include?(project2.client).should be_true
+      end
+    end
+    context 'given a collection of tickets' do
+      it 'returns a unique list of clients for those tickets' do
+        tickets = [ticket1 = Ticket.make, ticket2 = Ticket.make]
+        Client.for(tickets).include?(ticket1.client).should be_true
+        Client.for(tickets).include?(ticket2.client).should be_true
+      end
+    end
+    context 'given a collection of work units' do
+      it 'returns a unique list of clients for those work units' do
+        work_units = [work_unit1 = WorkUnit.make, work_unit2 = WorkUnit.make]
+        Client.for(work_units).include?(work_unit1.client).should be_true
+        Client.for(work_units).include?(work_unit2.client).should be_true
+      end
+    end
+  end
 end
 
