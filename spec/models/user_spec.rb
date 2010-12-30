@@ -2,27 +2,8 @@ require 'spec_helper'
 
 describe User do
 
-  let(:user) { User.new }
-
-  describe 'before create' do
-
-    it 'fails validation with no first name' do
-      should have(1).errors_on(:first_name)
-    end
-
-    it 'fails validation with no last name' do
-      should have(1).errors_on(:last_name)
-    end
-
-    it 'fails validation with no middle initial' do
-      should have(1).errors_on(:middle_initial)
-    end
-
-    it 'should have many work units' do
-      should have_many(:work_units)
-    end
-
-  end
+  it { should validate_presence_of :first_name }
+  it { should validate_presence_of :last_name }
 
   describe 'while being created' do
 
