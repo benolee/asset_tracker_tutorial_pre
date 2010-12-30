@@ -103,5 +103,35 @@ describe Client do
       end
     end
   end
+
+  describe '.tickets' do
+    context 'when the client has tickets' do
+      it 'returns the collection of tickets that belong to the client' do
+        ticket1 = Ticket.make
+        ticket2 = Ticket.make(:project => ticket1.project)
+        ticket3 = Ticket.make
+        client = ticket1.client
+        client.tickets.include?(ticket1).should be_true
+        client.tickets.include?(ticket2).should be_true
+        client.tickets.include?(ticket3).should be_false
+      end
+    end
+  end
+
+  describe '.for_user' do
+    context 'when a user has access to projects of clients' do
+      it 'returns a collection of clients to which the user has access' do
+        user = User.make
+        client1 = Client.make
+        project1 = Project.make(:client => client1)
+        client2 = Client.make
+        project2 = Project.make(:client => client2)
+        user.has_role!(:developer, project1)
+        user.has_no_roles_for!(project2)
+        Client.for_user(user).include?(client1).should be_true
+        Client.for_user(user).include?(client2).should be_false
+      end
+    end
+  end
 end
 
