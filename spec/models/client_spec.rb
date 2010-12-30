@@ -1,9 +1,14 @@
 require 'spec_helper'
 
 describe Client do
+  let(:user) { User.make }
   let(:client) { Client.make(:name => 'New Client', :status => 'Active') }
   let(:project) { Project.make(:client => client)  }
   let(:ticket)  { Ticket.make(:project => project) }
+  let(:work_unit1) { WorkUnit.make(:ticket => ticket) }
+  let(:work_unit2) { WorkUnit.make(:ticket => ticket) }
+  let(:work_unit3) { WorkUnit.make(:ticket => ticket) }
+
   subject { client }
 
   it { should have_many :projects }
@@ -25,8 +30,6 @@ describe Client do
 
   describe '.allows_access?' do
     subject { client.allows_access?(user) }
-    let(:user) { User.make }
-    let(:project) { Project.make(:client => client) }
 
     context 'when the user has access to one or more of its projects' do
       before { user.has_role!(:developer, project) }
@@ -44,9 +47,9 @@ describe Client do
 
     context 'when there are invoiced and uninvoiced work units' do
       before do
-        work_unit1 = WorkUnit.make(:ticket => ticket, :hours => 1, :hours_type => 'Normal')
-        work_unit2 = WorkUnit.make(:ticket => ticket, :hours => 1, :hours_type => 'Normal')
-        work_unit3 = WorkUnit.make(:ticket => ticket, :hours => 1, :hours_type => 'Normal', :invoiced => '1111', :invoiced_at => Date.current )
+        work_unit1.update_attributes(:hours => 1, :hours_type => 'Normal')
+        work_unit2.update_attributes(:hours => 1, :hours_type => 'Normal')
+        work_unit3.update_attributes(:hours => 1, :hours_type => 'Normal', :invoiced => '1', :invoiced_at => Date.current)
       end
 
       it 'returns the sum of the hours on the uninvoiced work units' do
@@ -60,8 +63,8 @@ describe Client do
 
     context 'when there are normal work units with hours' do
       before do
-        work_unit1 = WorkUnit.make(:ticket => ticket, :hours => 1, :hours_type => 'Normal')
-        work_unit2 = WorkUnit.make(:ticket => ticket, :hours => 1, :hours_type => 'Normal')
+        work_unit1.update_attributes(:hours => 1, :hours_type => 'Normal')
+        work_unit2.update_attributes(:hours => 1, :hours_type => 'Normal')
       end
 
       it 'should return the correct sum of hours for those work units' do
@@ -83,41 +86,43 @@ describe Client do
   end
 
   describe '.for_user' do
+    subject { Client.for_user user }
+
     context 'when a user has access to projects of clients' do
+      before { user.has_role!(:developer, project) }
+
       it 'returns a collection of clients to which the user has access' do
-        user = User.make
-        client1 = Client.make
-        project1 = Project.make(:client => client1)
-        client2 = Client.make
-        project2 = Project.make(:client => client2)
-        user.has_role!(:developer, project1)
-        user.has_no_roles_for!(project2)
-        Client.for_user(user).include?(client1).should be_true
-        Client.for_user(user).include?(client2).should be_false
+        should == [client]
       end
     end
   end
 
   describe '.for' do
+    let(:projects)   { [project] }
+    let(:tickets)    { [ticket]  }
+    let(:work_units) { [work_unit1, work_unit2, work_unit3] }
+
     context 'given a collection of projects' do
+      subject { Client.for projects }
+
       it 'returns a unique list of clients for those projects' do
-        projects = [project1 = Project.make, project2 = Project.make]
-        Client.for(projects).include?(project1.client).should be_true
-        Client.for(projects).include?(project2.client).should be_true
+        should == [client]
       end
     end
+
     context 'given a collection of tickets' do
+      subject { Client.for tickets }
+
       it 'returns a unique list of clients for those tickets' do
-        tickets = [ticket1 = Ticket.make, ticket2 = Ticket.make]
-        Client.for(tickets).include?(ticket1.client).should be_true
-        Client.for(tickets).include?(ticket2.client).should be_true
+        should == [client]
       end
     end
+
     context 'given a collection of work units' do
+      subject { Client.for work_units }
+
       it 'returns a unique list of clients for those work units' do
-        work_units = [work_unit1 = WorkUnit.make, work_unit2 = WorkUnit.make]
-        Client.for(work_units).include?(work_unit1.client).should be_true
-        Client.for(work_units).include?(work_unit2.client).should be_true
+        should == [client]
       end
     end
   end
