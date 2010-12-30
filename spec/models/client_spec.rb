@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe Client do
   let(:client) { Client.make(:name => 'New Client', :status => 'Active') }
+  let(:project) { Project.make(:client => client)  }
+  let(:ticket)  { Ticket.make(:project => project) }
   subject { client }
 
   it { should have_many :projects }
@@ -22,9 +24,9 @@ describe Client do
   end
 
   describe '.allows_access?' do
+    subject { client.allows_access?(user) }
     let(:user) { User.make }
     let(:project) { Project.make(:client => client) }
-    subject { client.allows_access?(user) }
 
     context 'when the user has access to one or more of its projects' do
       before { user.has_role!(:developer, project) }
@@ -38,44 +40,44 @@ describe Client do
   end
 
   describe '.uninvoiced_hours' do
-    let(:project) { Project.make(:client => client) }
-    let(:ticket)  { Ticket.make(:project => project) }
     subject { client.uninvoiced_hours }
 
-    context 'when there are uninvoiced work units' do
+    context 'when there are invoiced and uninvoiced work units' do
       before do
         work_unit1 = WorkUnit.make(:ticket => ticket, :hours => 1, :hours_type => 'Normal')
         work_unit2 = WorkUnit.make(:ticket => ticket, :hours => 1, :hours_type => 'Normal')
+        work_unit3 = WorkUnit.make(:ticket => ticket, :hours => 1, :hours_type => 'Normal', :invoiced => '1111', :invoiced_at => Date.current )
       end
 
-      it 'returns the sum of the hours on those work units' do
+      it 'returns the sum of the hours on the uninvoiced work units' do
         should == 2
       end
     end
   end
 
   describe '.hours' do
+    subject { client.hours }
+
     context 'when there are normal work units with hours' do
+      before do
+        work_unit1 = WorkUnit.make(:ticket => ticket, :hours => 1, :hours_type => 'Normal')
+        work_unit2 = WorkUnit.make(:ticket => ticket, :hours => 1, :hours_type => 'Normal')
+      end
+
       it 'should return the correct sum of hours for those work units' do
-        work_unit1 = WorkUnit.make(:hours => '1.0', :hours_type => 'Normal')
-        client1 = work_unit1.client
-        work_unit2 = WorkUnit.make(:hours => '1.0', :hours_type => 'Normal', :ticket => work_unit1.ticket)
-        work_unit3 = WorkUnit.make(:hours => '1.0', :hours_type => 'Normal')
-        client1.hours.should == 2.0
+        should == 2
       end
     end
   end
 
   describe '.tickets' do
+    subject { client.tickets }
+
     context 'when the client has tickets' do
+      let(:ticket2) { Ticket.make(:project => project) }
+
       it 'returns the collection of tickets that belong to the client' do
-        ticket1 = Ticket.make
-        ticket2 = Ticket.make(:project => ticket1.project)
-        ticket3 = Ticket.make
-        client = ticket1.client
-        client.tickets.include?(ticket1).should be_true
-        client.tickets.include?(ticket2).should be_true
-        client.tickets.include?(ticket3).should be_false
+        should == [ticket, ticket2]
       end
     end
   end
