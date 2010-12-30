@@ -1,38 +1,20 @@
 require 'spec_helper'
 
 describe Ticket do
-  let(:ticket){ Ticket.new }
-  subject{ ticket }
+  before { @ticket = Ticket.make(:name => 'New Ticket') }
 
-  it "should allow comments" do
-    subject.respond_to?(:comments).should be true
-  end
+  it { should belong_to :project }
+  it { should have_many :work_units }
+  it { should have_many :file_attachments }
 
-  context 'validations' do
-    it "fails validation with no project_id" do
-      should have(1).errors_on(:project_id)
-    end
+  it { should validate_presence_of :project_id }
+  it { should validate_presence_of :name }
 
-    it "fails validation with no name" do
-      should have(1).errors_on(:name)
-    end
-  end
+  describe '.to_s' do
+    subject { @ticket.to_s }
 
-  context 'when dealing with associations' do
-    it "should belong to a project" do
-      should belong_to(:project)
-    end
-
-    it "should have many work units" do
-      should have_many(:work_units)
-    end
-  end
-
-  describe 'while being created' do
-    it 'should create a new ticket from the blueprint' do
-      lambda do
-        Ticket.make
-      end.should change(Ticket, :count).by(1)
+    it 'returns the name of the ticket as a string' do
+      should == 'New Ticket'
     end
   end
 
@@ -72,13 +54,6 @@ describe Ticket do
         uninvoiced_hours = work_unit_1.effective_hours + work_unit_2.effective_hours
         ticket.uninvoiced_hours.should == uninvoiced_hours
       end
-    end
-  end
-
-  describe '.to_s' do
-    it 'returns the name of the ticket as a string' do
-      ticket = Ticket.make(:name => 'Testticket')
-      ticket.to_s.should == 'Testticket'
     end
   end
 
@@ -139,4 +114,13 @@ describe Ticket do
       end
     end
   end
+
+  describe 'while being created' do
+    it 'should create a new ticket from the blueprint' do
+      lambda do
+        Ticket.make
+      end.should change(Ticket, :count).by(1)
+    end
+  end
+
 end
