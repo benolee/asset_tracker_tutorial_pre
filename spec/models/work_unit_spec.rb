@@ -1,39 +1,25 @@
 require 'spec_helper'
 
 describe WorkUnit do
-  let(:work_unit) { WorkUnit.new }
-  subject{ work_unit }
+  before { @work_unit = WorkUnit.make(:description => 'New Description') }
 
-  it 'belongs to a ticket' do
-    should belong_to(:ticket)
-  end
+  it { should have_many :comments }
+  it { should belong_to :ticket }
+  it { should belong_to :user }
 
-  it 'belongs to a user' do
-    should belong_to(:user)
-  end
+  it { should validate_presence_of :ticket_id }
+  it { should validate_presence_of :user_id }
+  it { should validate_presence_of :description }
+  it { should validate_presence_of :hours }
+  it { should validate_presence_of :scheduled_at }
+  it { should validate_presence_of :effective_hours }
 
-  it 'fails validation with no ticket_id' do
-    should have(1).errors_on(:ticket_id)
-  end
+  describe '.to_s' do
+    subject { @work_unit.to_s }
 
-  it 'fails validation with no user' do
-    should have(1).errors_on(:user_id)
-  end
-
-  it 'fails validation with no description' do
-    should have(1).errors_on(:description)
-  end
-
-  it 'fails validation with no scheduled_at' do
-    should have(1).errors_on(:scheduled_at)
-  end
-
-  it 'fails validation with no hours' do
-    should have(1).errors_on(:hours)
-  end
-
-  it "allows comments" do
-    subject.respond_to?(:comments).should be true
+    it 'returns the description' do
+      should == 'New Description'
+    end
   end
 
   describe 'for_client' do
@@ -114,14 +100,6 @@ describe WorkUnit do
       workunit = WorkUnit.new
       workunit.invoiced = ''
       workunit.not_invoiced?.should == true
-    end
-  end
-
-  describe '.to_s' do
-    it 'returns the description' do
-      workunit = WorkUnit.new
-      workunit.description = 'testing'
-      workunit.to_s.should == 'testing'
     end
   end
 
