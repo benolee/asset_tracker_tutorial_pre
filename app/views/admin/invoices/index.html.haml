@@ -16,7 +16,7 @@
             %th= @work_units.count
             %th= @work_units.sum(:effective_hours)
           - @clients.each do |client|
-            %tr
+            %tr{ :class => cycle("odd", "even") }
               %td= link_to client, admin_invoice_path(client)
               %td= @work_units.for_client(client).count
               %td= @work_units.for_client(client).sum(:effective_hours)
