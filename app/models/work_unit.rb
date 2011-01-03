@@ -70,11 +70,11 @@ class WorkUnit < ActiveRecord::Base
   end
 
   def set_effective_hours!
-    if project.overtime_multiplier
+    if ticket && project && project.overtime_multiplier
       overtime_multiplier = project.overtime_multiplier
-    elsif client.overtime_multiplier
+    elsif client && client.overtime_multiplier
       overtime_multiplier = client.overtime_multiplier
-    elsif SiteSettings.first.overtime_multiplier
+    elsif SiteSettings.first && SiteSettings.first.overtime_multiplier
       overtime_multiplier = SiteSettings.first.overtime_multiplier
     else
       overtime_multiplier = BigDecimal.new("1.5")

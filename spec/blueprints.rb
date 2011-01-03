@@ -62,6 +62,7 @@ WorkUnit.blueprint do
   hours
   scheduled_at
   hours_type
+  SiteSettings.create(:overtime_multiplier => 1.5)
 end
 
 WorkUnit.blueprint(:paid) do
