@@ -2,15 +2,33 @@ Feature: File Attachment Management
   As a user
   I should be able to view and add file attachments
 
-  @wip
-  Scenario: List and add file attachments
-    Given I am an authenticated user
-    And a client "test client" exists
-    And the following file attachments:
-      |  title  |    comment      |  user_id  | commentable_id | commentable_type | active |
-      |  first1 | blah blah blah  |  1        |    15           |  Client          | true   |
-      |  first2 | bleh bleh bleh  |  1        |    15           |  Client          | true   |
-      |  first3 | blue blue blue  |  1        |    15           |  Client          | true   |
-      |  first4 | bale bale bale  |  1        |    15           |  Client          | true   |
-    And I am on the client's page
- 
+  Scenario: Add file attachments to client
+    Given I am an authenticated user with an "admin" role
+    And a client exists
+    When I go to the client's page
+    And I follow "Add File Attachment"
+    And I attach a file
+    And I press "Submit"
+    Then I should be on the client's page
+    And I should see "File Attachment created successfully" within "#flash_notice"
+
+  Scenario: Add file attachments to project
+    Given I am an authenticated user with an "admin" role
+    And a project exists
+    When I go to the project's page
+    And I follow "Add File Attachment"
+    And I attach a file
+    And I press "Submit"
+    Then I should be on the project's page
+    And I should see "File Attachment created successfully" within "#flash_notice"
+
+  Scenario: Add file attachments to ticket
+    Given I am an authenticated user with an "admin" role
+    And a ticket exists
+    When I go to the ticket's page
+    And I follow "Add File Attachment"
+    And I attach a file
+    And I press "Submit"
+    Then I should be on the ticket's page
+    And I should see "File Attachment created successfully" within "#flash_notice"
+
