@@ -58,7 +58,7 @@ class WorkUnit < ActiveRecord::Base
   end
 
   def not_invoiced?
-    invoiced.empty?
+    invoiced.blank?
   end
 
   def to_s
