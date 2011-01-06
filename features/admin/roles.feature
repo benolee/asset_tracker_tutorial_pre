@@ -1,7 +1,7 @@
 Feature: Roles
 
   Scenario: Edit a user's roles
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     And a project exists
     And a user exists
     When I am on the admin user's projects page
