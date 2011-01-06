@@ -73,3 +73,6 @@ WorkUnit.blueprint(:invoiced) do
   invoiced { 'Invoice Number 1000' }
 end
 
+SiteSettings.blueprint do
+  overtime_multiplier
+end

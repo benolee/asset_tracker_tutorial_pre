@@ -5,7 +5,7 @@
   .yui3-u-1
     .gradient_border_wrap
       .gradient_border_content
-        = form_for :admin_site_settings, @site_settings, :url => { :action => "update" }, :html => { :method => "put" } do |f|
+        = form_for @site_settings, :as => :admin_site_settings, :url => { :action => "update" }, :html => { :method => "put" } do |f|
           .field_wrap
             = f.label :overtime_multiplier
             = f.text_field :overtime_multiplier
