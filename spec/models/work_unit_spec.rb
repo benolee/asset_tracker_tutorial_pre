@@ -1,7 +1,9 @@
 require 'spec_helper'
 
 describe WorkUnit do
-  before { @work_unit = WorkUnit.make(:description => 'New Description') }
+  let(:work_unit) { WorkUnit.make }
+  let(:work_unit1) { WorkUnit.make }
+  let(:work_unit2) { WorkUnit.make }
 
   it { should have_many :comments }
   it { should belong_to :ticket }
@@ -14,155 +16,342 @@ describe WorkUnit do
   it { should validate_presence_of :scheduled_at }
   it { should validate_presence_of :effective_hours }
 
-  describe '.to_s' do
-    subject { @work_unit.to_s }
 
-    it 'returns the description' do
-      should == 'New Description'
+  describe '#scheduled_between' do
+    subject { WorkUnit.scheduled_between(Date.yesterday.beginning_of_day, Date.current.end_of_day) }
+
+    before do
+      work_unit1.update_attribute(:scheduled_at, Date.yesterday)
+      work_unit2.update_attribute(:scheduled_at, Date.current)
+    end
+
+    it 'should return a collection of work units scheduled between the two given dates' do
+      should == [work_unit1, work_unit2]
     end
   end
 
-  describe 'for_client' do
-    it 'should return the proper work units for a given client' do
-      work_unit_1 = WorkUnit.make
-      ticket = work_unit_1.ticket
-      client = work_unit_1.client
-      work_unit_2 = WorkUnit.make(:ticket => ticket)
-      work_unit_3 = WorkUnit.make
-      WorkUnit.for_client(client).should == [work_unit_1, work_unit_2]
-      WorkUnit.for_client(client).include?(work_unit_3).should_not == true
+  describe '#unpaid' do
+    subject { WorkUnit.unpaid }
+
+    before do
+      work_unit1.update_attributes(:paid => 'Paid', :paid_at => Date.current)
+      work_unit2.update_attributes(:paid => nil, :paid_at => nil)
+    end
+
+    it 'should return a collection of work units which are unpaid' do
+      should == [work_unit2]
     end
   end
 
-  describe 'email_list' do
-    it 'should return the proper list of contacts email_addresses for a given work unit' do
-      work_unit_1 = WorkUnit.make
-      ticket = work_unit_1.ticket
-      work_unit_2 = WorkUnit.make(:ticket => ticket)
-      client = work_unit_1.client
-      contact_1 = Contact.make(:receives_email => true, :client => client)
-      contact_2 = Contact.make(:receives_email => true, :client => client)
-      contact_3 = Contact.make(:receives_email => false, :client => client)
-      work_unit_3 = WorkUnit.make
-      proper_list = [contact_1.email_address, contact_2.email_address]
-      work_unit_1.email_list.should == proper_list
+  describe '#not_invoiced' do
+    subject { WorkUnit.not_invoiced }
+
+    before do
+      work_unit1.update_attributes(:invoiced => 'Invoiced', :invoiced_at => Date.current)
+      work_unit2.update_attributes(:invoiced => nil, :invoiced_at => nil)
+    end
+
+    it 'should return a collection of work units which are not invoiced' do
+      should == [work_unit2]
     end
   end
 
-  describe 'while being created' do
-    it 'should create a new work unit from the blueprint' do
-      lambda do
-        WorkUnit.make
-      end.should change(WorkUnit, :count).by(1)
+  describe '#for_client' do
+    subject { WorkUnit.for_client client }
+
+    let(:ticket) { Ticket.make }
+    let(:client) { ticket.client }
+
+    before do
+      work_unit1.update_attribute(:ticket, ticket)
+      work_unit2.update_attribute(:ticket, ticket)
+    end
+
+    it 'should return a collection of work units that belong to the given client' do
+      should == [work_unit1, work_unit2]
     end
   end
 
-  describe '.client' do
-    it 'returns the parent client of that work unit' do
-      workunit = WorkUnit.make
-      workunit.client.should == workunit.ticket.project.client
+  describe '#for_project' do
+    subject { WorkUnit.for_project project }
+
+    let(:ticket) { Ticket.make }
+    let(:project) { ticket.project }
+
+    before do
+      work_unit1.update_attribute(:ticket, ticket)
+      work_unit2.update_attribute(:ticket, ticket)
+    end
+
+    it 'should return a collection of work units that belong to the given project' do
+      should == [work_unit1, work_unit2]
     end
   end
 
-  describe '.project' do
-    it 'returns the parent project of that work unit' do
-      workunit = WorkUnit.make
-      workunit.project.should == workunit.ticket.project
+  describe '#for_ticket' do
+    subject { WorkUnit.for_ticket ticket }
+
+    let(:ticket) { Ticket.make }
+
+    before do
+      work_unit1.update_attribute(:ticket, ticket)
+      work_unit2.update_attribute(:ticket, ticket)
+    end
+
+    it 'should return a collection of work units that belong to the given ticket' do
+      should == [work_unit1, work_unit2]
     end
   end
 
-  describe '.paid?' do
-    it 'returns true if the work unit has been paid' do
-      workunit = WorkUnit.new
-      workunit.paid = 'Check 1000'
-      workunit.paid?.should == true
+  describe '#for_user' do
+    subject { WorkUnit.for_user user }
+
+    let(:user) { User.make }
+
+    before do
+      work_unit1.update_attribute(:user, user)
+      work_unit2.update_attribute(:user, user)
+    end
+
+    it 'should return a collection of work units that belong to the given user' do
+      should == [work_unit1, work_unit2]
     end
   end
 
-  describe '.unpaid?' do
-    it 'returns true if the work unit has NOT been paid' do
-      workunit = WorkUnit.new
-      workunit.paid = ''
-      workunit.unpaid?.should == true
+  describe '#sort_by_scheduled_at' do
+    subject { WorkUnit.sort_by_scheduled_at }
+
+    before do
+      work_unit1.update_attribute(:scheduled_at, Date.yesterday)
+      work_unit2.update_attribute(:scheduled_at, Date.current)
+    end
+
+    it 'should return a collection of work units sorted by scheduled time, descending' do
+      should == [work_unit2, work_unit1]
     end
   end
 
-  describe '.invoiced?' do
-    it 'returns true if the work unit has been invoiced' do
-      workunit = WorkUnit.new
-      workunit.invoiced = 'Invoice 1000'
-      workunit.invoiced?.should == true
+  describe '#pto' do
+    subject { WorkUnit.pto }
+
+    before do
+      work_unit1.update_attribute(:hours_type, 'PTO')
+      work_unit2.update_attribute(:hours_type, 'Normal')
+    end
+
+    it 'should return a collection of work units with hours type "PTO"' do
+      should == [work_unit1]
     end
   end
 
-  describe '.not_invoiced?' do
-    it 'returns true if the work unit has NOT been invoiced' do
-      workunit = WorkUnit.new
-      workunit.invoiced = ''
-      workunit.not_invoiced?.should == true
+  describe '#cto' do
+    subject { WorkUnit.cto }
+
+    before do
+      work_unit1.update_attribute(:hours_type, 'CTO')
+      work_unit2.update_attribute(:hours_type, 'Normal')
+    end
+
+    it 'should return a collection of work units with hours type "CTO"' do
+      should == [work_unit1]
     end
   end
 
-  describe '.allows_access?' do
-    before(:each) do
-      @user = User.make
-      @work_unit = WorkUnit.make
-      @project = @work_unit.project
+  describe '#overtime' do
+    subject { WorkUnit.overtime }
+
+    before do
+      work_unit1.update_attribute(:hours_type, 'Overtime')
+      work_unit2.update_attribute(:hours_type, 'Normal')
     end
 
-    it 'returns false if the user does not have access to the parent client' do
-      @work_unit.allows_access?(@user).should be_false
+    it 'should return a collection of work units with hours type "Overtime"' do
+      should == [work_unit1]
+    end
+  end
+
+  describe '#normal' do
+    subject { WorkUnit.normal }
+
+    before do
+      work_unit1.update_attribute(:hours_type, 'Overtime')
+      work_unit2.update_attribute(:hours_type, 'Normal')
     end
 
-    it 'returns true if the user has access to the parent client' do
-      @user.has_role!(:developer, @project)
-      @work_unit.allows_access?(@user).should be_true
+    it 'should return a collection of work units with hours type "Normal"' do
+      should == [work_unit2]
     end
   end
 
   describe '.validate_client_status' do
-    it 'checks to see if the client is not inactive' do
-      work_unit = WorkUnit.make_unsaved
-      client = work_unit.client
-      client.update_attribute(:status, "Inactive")
-      work_unit.save.should be_false
-      work_unit.should have(1).errors_on(:base)
+    subject { work_unit.validate_client_status }
+
+    let(:client) { work_unit.client }
+
+    context 'when the client status is "Inactive"' do
+      before { client.status = "Inactive" }
+
+      it { should raise_error }
+    end
+  end
+
+  describe '.send_email!' do
+    context 'when there are contacts for the parent client who receive email' do
+      let(:contact1) { Contact.make(:client => work_unit.client) }
+      let(:contact2) { Contact.make(:client => work_unit.client) }
+
+      before do
+        contact1.update_attribute(:receives_email, true)
+        contact2.update_attribute(:receives_email, false)
+      end
+
+      it 'should send the email' do
+        lambda { work_unit.send_email! }.should change(ActionMailer::Base.deliveries, :count).by(1)
+      end
+    end
+  end
+
+  describe '.email_list' do
+    subject { work_unit.email_list }
+
+    context 'when there are contacts for the parent client who receive email' do
+      let(:contact1) { Contact.make(:client => work_unit.client) }
+      let(:contact2) { Contact.make(:client => work_unit.client) }
+
+      before do
+        contact1.update_attribute(:receives_email, true)
+        contact2.update_attribute(:receives_email, false)
+      end
+
+      it 'should return a collection of email addresses for those contacts' do
+        should == [contact1.email_address]
+      end
+    end
+  end
+
+  describe '.client' do
+    subject { work_unit.client }
+
+    it 'should return the parent client' do
+      should == work_unit.ticket.project.client
+    end
+  end
+
+  describe '.project' do
+    subject { work_unit.project }
+
+    it 'should return the parent project' do
+      should == work_unit.ticket.project
+    end
+  end
+
+  describe '.unpaid?' do
+    subject { work_unit.unpaid? }
+
+    context 'when the work unit is unpaid' do
+      before { work_unit.update_attributes(:paid => nil, :paid_at => nil) }
+      it { should be_true }
+    end
+
+    context 'when the work unit is paid' do
+      before { work_unit.update_attributes(:paid => 'Paid', :paid_at => Date.current) }
+      it { should be_false }
+    end
+  end
+
+  describe '.paid?' do
+    subject { work_unit.paid? }
+
+    context 'when the work unit is unpaid' do
+      before { work_unit.update_attributes(:paid => nil, :paid_at => nil) }
+      it { should be_false }
+    end
+
+    context 'when the work unit is paid' do
+      before { work_unit.update_attributes(:paid => 'Paid', :paid_at => Date.current) }
+      it { should be_true }
+    end
+  end
+
+  describe '.invoiced?' do
+    subject { work_unit.invoiced? }
+
+    context 'when the work unit is invoiced' do
+      before { work_unit.update_attributes(:invoiced => 'Invoiced', :invoiced_at => Date.current) }
+      it { should be_true }
+    end
+
+    context 'when the work unit is not invoiced' do
+      before { work_unit.update_attributes(:invoiced => nil, :invoiced_at => nil) }
+      it { should be_false }
+    end
+  end
+
+  describe '.not_invoiced?' do
+    subject { work_unit.not_invoiced? }
+
+    context 'when the work unit is invoiced' do
+      before { work_unit.update_attributes(:invoiced => 'Invoiced', :invoiced_at => Date.current) }
+      it { should be_false }
+    end
+
+    context 'when the work unit is not invoiced' do
+      before { work_unit.update_attributes(:invoiced => nil, :invoiced_at => nil) }
+      it { should be_true }
+    end
+  end
+
+  describe '.to_s' do
+    subject { work_unit.to_s }
+
+    before { work_unit.update_attribute(:description, 'New description') }
+
+    it 'returns the description' do
+      should == 'New description'
+    end
+  end
+
+  describe '.allows_access?' do
+    subject { work_unit.allows_access? user }
+
+    let(:user) { User.make }
+
+    context 'when the user has a role on the parent project' do
+      before { user.has_role!(:developer, work_unit.project) }
+      it { should be_true }
+    end
+
+    context 'when the user has an admin role' do
+      before { user.has_role!(:admin) }
+      it { should be_true }
+    end
+
+    context 'when the user has no role on the parent project' do
+      before { user.has_no_roles_for!(work_unit.project) }
+      it { should be_false }
     end
   end
 
   describe '.set_effective_hours!' do
     context 'when saving an overtime work unit' do
+      before do
+        work_unit.project.overtime_multiplier = 1.5
+        work_unit.update_attributes(:hours => 2, :hours_type => 'Overtime')
+      end
+
       it 'applies the overtime_multiplier' do
-        work_unit = WorkUnit.make(:hours => 2.0, :hours_type => "Overtime")
-        work_unit.project.overtime_multiplier = 1.5
-        work_unit.save
-        work_unit.effective_hours.should == 3.0
+        work_unit.effective_hours.should == 3
       end
     end
+
     context 'when saving a normal work_unit' do
-      it 'does not apply the overtime multiplier' do
-        work_unit = WorkUnit.make(:hours => 2.0, :hours_type => "Normal")
+      before do
         work_unit.project.overtime_multiplier = 1.5
-        work_unit.save
-        work_unit.effective_hours.should == 2.0
+        work_unit.update_attributes(:hours => 2, :hours_type => 'Normal')
       end
-    end
-    context 'when the client and project overtime_multiplier differ' do
-      it 'should apply the overtime multiplier for the project' do
-        work_unit = WorkUnit.make(:hours => 2.0, :hours_type => "Overtime")
-        work_unit.project.overtime_multiplier = 2.0
-        work_unit.client.overtime_multiplier = 1.5
-        work_unit.save
-        work_unit.effective_hours.should == 4.0
-      end
-    end
-    context 'with a client overtime_multiplier but no project overtime_multiplier' do
-      it 'should apply the client overtime multiplier' do
-        work_unit = WorkUnit.make(:hours => 2.0, :hours_type => "Overtime")
-        work_unit.project.overtime_multiplier = nil
-        work_unit.client.overtime_multiplier = 1.5
-        work_unit.save
-        work_unit.effective_hours.should == 3.0
+
+      it 'does not apply the overtime multiplier' do
+        work_unit.effective_hours.should == 2
       end
     end
   end

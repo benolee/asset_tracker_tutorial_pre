@@ -31,7 +31,7 @@ Given /^I am an authenticated user "([^"]*)" and password "([^"]*)"$/ do |login,
   And %{I press "Sign in"}
 end
 
-Given /^I am an authenticated user with an+ "([^\"]*)" role$/ do |role|
+Given /^I am an authenticated user with an? "([^\"]*)" role$/ do |role|
   email = 'testing@man.net'
   login = 'Testing man'
   password = 'secretpass'

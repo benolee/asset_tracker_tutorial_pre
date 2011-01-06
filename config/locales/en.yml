@@ -125,7 +125,7 @@ en:
   cannot_make_changes_to_another_user: "You cannot make changes to another user."
   work_unit_created_successfully: "Work Unit was created successfully."
   work_unit_created_unsuccessfully: "There was a problem creating the work unit"
-  work_unit_updated_successfully: "WorkUnit updated."
+  work_unit_updated_successfully: "Work unit updated."
   work_unit_updated_unsuccessfully: "There was a problem updating the work_unit."
   user_created_successfully: "Created successfully"
   user_created_unsuccessfully: "Didn't create."

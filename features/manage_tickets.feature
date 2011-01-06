@@ -42,25 +42,17 @@ Feature: Manage tickets
     And I press "Create"
     Then I should see "name 1"
 
-  Scenario: Register new ticket - the form
+  @javascript
+  Scenario: Register new ticket
     Given I am an authenticated user with an "admin" role
-    Given a client "test client" exists
-    And a project exists with name: "test project", client: client "test client"
-    And I am assigned to the project
-    And I am on the project's page
-    And I follow "New Ticket"
-    Then I should see a link with text "Cancel" within ".actions"
-
-#  Scenario: Delete ticket
-#    Given the following tickets:
-#      |name|
-#      |name 1|
-#      |name 2|
-#      |name 3|
-#      |name 4|
-#    When I delete the 3rd ticket
-#    Then I should see the following tickets:
-#      |Name|
-#      |name 1|
-#      |name 2|
-#      |name 4|
+    And a client exists with name: "New client"
+    And a project exists with client: client, name: "New project"
+    When I visit /
+    And I select "New client" from "ticket_client_id"
+    And I select "New project" from "ticket_project_id"
+    And I fill in "ticket_name" with "New ticket"
+    And I fill in "ticket_description" with "New description"
+    Then I should see "Ticket created successfully" within "#flash_notice"
+    When I press "ticket_submit"
+    And I go to the project's page
+    Then I should see "New ticket" within "table"
