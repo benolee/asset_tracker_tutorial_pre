@@ -10,7 +10,7 @@ require File.expand_path(File.dirname(__FILE__) + "../../spec/blueprints")
 
 # Create an admin account
 print "Creating user accounts..."
-User.create(:email => 'admin@isotope11.com',
+User.create(:email => 'admin@xrono.org',
             :first_name => 'Admin',
             :middle_initial => 'A',
             :last_name => 'McAdmin',
@@ -18,7 +18,7 @@ User.create(:email => 'admin@isotope11.com',
             :password_confirmation => '123456').has_role!(:admin)
 
 # Create 2 developer accounts (1 with unpaid hours)
-User.create(:email => 'test@isotope11.com',
+User.create(:email => 'test@xrono.org',
             :first_name => 'Test',
             :middle_initial => 'T',
             :last_name => 'McTestman',

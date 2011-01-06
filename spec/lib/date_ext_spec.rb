@@ -5,7 +5,6 @@ describe Date do
     @friday = Date.parse('2010-10-15')
     @monday = Date.parse('2010-10-18')
     @tuesday = Date.parse('2010-10-19')
-    
   end
 
   context "when determining the previous working day" do
@@ -25,7 +24,7 @@ describe Date do
   end
 
   context "when determining the next working day" do
-  
+
     it "should have a next_working_day method" do
       @monday.respond_to?(:next_working_day).should be true
     end
