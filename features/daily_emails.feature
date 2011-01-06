@@ -6,5 +6,5 @@ Feature: Send Daily Email Report
     And a contact "Test Contact" exists with client: client "Test Client", email_address: "testcontact@example.com", receives_email: true
     When the daily email goes out to client: "Test Client"
     Then 1 email should be delivered to "testcontact@example.com"
-    And the first email should contain "Isotope"
+    And the first email should contain "Xrono"
 

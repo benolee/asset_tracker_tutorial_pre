@@ -8,4 +8,3 @@ Feature: Roles
     And I choose "project_1_client"
     And I press "Submit"
     Then I should see "Roles have been updated successfully" within "#flash_notice"
-

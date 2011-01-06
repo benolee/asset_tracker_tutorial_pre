@@ -19,7 +19,7 @@ Feature: Manage Work Units
     And I press "Create Work Unit"
     Then I should see "TTC: 3.0" within ".overtime"
 
-  @javascript
+  @javascript @wip
   Scenario: Attempt to register a work unit on a suspended client
     Given I am an authenticated user with an admin role
     And a client "test client" exists with name: "test client", initials: "TTC", status: "Suspended"
