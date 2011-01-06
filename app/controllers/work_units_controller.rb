@@ -42,8 +42,6 @@ class WorkUnitsController < ApplicationController
           render :json => "{\"success\": true}", :layout => false, :status => 200 and return
         end
       end
-      flash[:notice] = t(:work_unit_created_successfully)
-      redirect_to dashboard_path and return
     else
       if request.xhr?
         render :json => @work_unit.errors.full_messages.to_json, :layout => false, :status => 406 and return
