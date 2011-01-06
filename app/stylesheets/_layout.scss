@@ -263,14 +263,22 @@ h4.dashboard_title {
 }
 
 .week_pagination {
-  .today {
-    margin: 0 0 0 320px;
-  }
+  height: 10px;
+  position:relative;
   .previous_week {
-    padding: 0 5px 0 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .today {
+    display: inline-block;
+    width: 100%;
+    text-align:center;
   }
   .next_week {
-    float:right;
+    position: absolute;
+    top: 0;
+    right: 0;
   }
 }
 
