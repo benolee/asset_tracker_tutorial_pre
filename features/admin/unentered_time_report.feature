@@ -3,7 +3,7 @@ Feature: Unentered Time Report
   I should be able to list users who didn't enter time
 
   Scenario: List users with unentered time
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     And a client "Test Client" exists with name: "Test Client"
     And a project "Test Project" exists with name: "Test Project", client: client "Test Client"
     And a ticket "Test Ticket" exists with name: "Test Ticket", project: project "Test Project"
@@ -14,7 +14,7 @@ Feature: Unentered Time Report
     Then I should see a link with text "Stan M Lee"
 
   Scenario: Do not list user with unpaid work unit
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     And a user exists with first_name: "Stan", last_name: "Lee", middle_initial: "M", email: "stanlee@example.com", password: "123456", password_confirmation: "123456"
     And a client "Test Client" exists with name: "Test Client"
     And a project "Test Project" exists with name: "Test Project", client: client "Test Client"

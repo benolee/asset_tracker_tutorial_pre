@@ -2,6 +2,7 @@ Feature: Self administration
   As a user
   I should be able to change my password
 
+  @wip
   Scenario: Change password successfully
     Given I am an authenticated user "bobby@example.com" and password "changeme"
     When I go to the home page
@@ -13,7 +14,7 @@ Feature: Self administration
     And I press "Update"
     Then I should see "Successfully updated password"
 
-    @test
+  @wip
   Scenario: Change password failure
     Given I am an authenticated user "bobby@example.com" and password "changeme"
     When I go to the home page

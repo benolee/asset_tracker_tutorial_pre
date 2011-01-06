@@ -4,7 +4,7 @@ Feature: Manage tickets
   wants a nice management interface
 
   Scenario: List tickets
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     Given a client "test client" exists
     And a project "test project" exists with name: "test project", client: client "test client"
     And a ticket exists with project: project "test project", name: "test ticket"
@@ -12,7 +12,7 @@ Feature: Manage tickets
     Then I should see "test ticket"
 
   Scenario: View a ticket
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     Given a client "test client" exists with name: "test client"
     And a project "test project" exists with name: "test project", client: client "test client"
     And a ticket exists with project: project "test project", name: "test ticket"
@@ -22,7 +22,7 @@ Feature: Manage tickets
     Then I should see a link with text "Edit" within ".subnav"
 
   Scenario: Edit a ticket
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     Given a client "test client" exists
     And a project "test project" exists with name: "test project", client: client "test client"
     And a ticket exists with project: project "test project", name: "test ticket"
@@ -32,7 +32,7 @@ Feature: Manage tickets
     Then I should see "test ticket2"
 
   Scenario: Register new ticket
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     Given a client "test client" exists
     And a project exists with name: "test project", client: client "test client"
     And I am assigned to the project
@@ -44,7 +44,7 @@ Feature: Manage tickets
 
   @javascript @wip
   Scenario: Register new ticket
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     And a client exists with name: "New client"
     And a project exists with client: client, name: "New project"
     When I visit /
@@ -52,7 +52,7 @@ Feature: Manage tickets
     And I select "New project" from "ticket_project_id"
     And I fill in "ticket_name" with "New ticket"
     And I fill in "ticket_description" with "New description"
-    Then I should see "Ticket created successfully" within "#flash_notice"
     When I press "ticket_submit"
-    And I go to the project's page
+    Then I should see "Ticket created successfully" within "#flash_notice"
+    When I go to the project's page
     Then I should see "New ticket" within "table"
