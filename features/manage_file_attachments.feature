@@ -31,4 +31,3 @@ Feature: File Attachment Management
     And I press "Submit"
     Then I should be on the ticket's page
     And I should see "File Attachment created successfully" within "#flash_notice"
-

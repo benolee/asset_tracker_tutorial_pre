@@ -42,7 +42,7 @@ Feature: Manage tickets
     And I press "Create"
     Then I should see "name 1"
 
-  @javascript
+  @javascript @wip
   Scenario: Register new ticket
     Given I am an authenticated user with an "admin" role
     And a client exists with name: "New client"

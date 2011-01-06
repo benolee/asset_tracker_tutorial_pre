@@ -12,4 +12,3 @@ Feature: Comment Management                                                     
     Then I should see "This is a test comment!"
     When I press "Hide Comment"
     Then I should not see "blah blah blah"
-

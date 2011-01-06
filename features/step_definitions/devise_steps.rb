@@ -2,8 +2,8 @@ Given /^I have one\s+user "([^\"]*)" with password "([^\"]*)" and login "([^\"]*
   User.create!(:email => email,
                :login => login,
                :password => password,
-               :first_name => 'Nick',
-               :last_name => 'Fine',
+               :first_name => 'Clark',
+               :last_name => 'Kent',
                :middle_initial => 'D',
                :password_confirmation => password)
 end
