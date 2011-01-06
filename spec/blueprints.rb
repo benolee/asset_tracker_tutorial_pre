@@ -20,6 +20,8 @@ Sham.define do
   email_address                                 { |index| "#{index}" + Faker::Internet.email }
   first_name(:unique => false)          { Faker::Name.first_name }
   last_name(:unique => false)           { Faker::Name.last_name }
+  # Site Settings
+  overtime_multiplier(:unique => false) { rand(3) + 1 }
 end
 
 Contact.blueprint do

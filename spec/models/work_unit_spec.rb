@@ -332,6 +332,59 @@ describe WorkUnit do
     end
   end
 
+  describe '.overtime_multiplier' do
+    subject { work_unit.overtime_multiplier }
+
+    let(:project) { work_unit.project }
+    let(:client) { work_unit.client }
+    let(:site_settings) { SiteSettings.make }
+
+    context 'when the project and client have an overtime multiplier' do
+      before do
+        project.overtime_multiplier = 3
+        client.overtime_multiplier = 2.5
+        site_settings.overtime_multiplier = 2
+      end
+
+      it 'should return the project overtime multiplier' do
+        should == 3
+      end
+    end
+
+    context 'when the client has an overtime multiplier' do
+      before do
+        client.overtime_multiplier = 2.5
+        site_settings.overtime_multiplier = 2
+      end
+
+      it 'should return the client overtime multiplier' do
+        should == 2.5
+      end
+    end
+
+    context 'when neither the project nor the client have an overtime multiplier' do
+      before do
+        site_settings.overtime_multiplier = 2
+      end
+
+      it 'should return the site settings overtime multiplier' do
+        should == 2
+      end
+    end
+
+    context 'when there is no site settings overtime multiplier' do
+      before do
+        project.overtime_multiplier = nil
+        client.overtime_multiplier = nil
+        site_settings.overtime_multiplier = nil
+      end
+
+      it 'should default to 1.5' do
+        should == 1.5
+      end
+    end
+  end
+
   describe '.set_effective_hours!' do
     context 'when saving an overtime work unit' do
       before do
