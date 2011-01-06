@@ -2,6 +2,11 @@ class ProjectsController < ApplicationController
   before_filter :load_new_project, :only => [:new, :create]
   before_filter :load_project, :only => [:show, :edit, :update]
   before_filter :load_file_attachments, :only => [:show, :new, :create]
+  access_control do
+    allow :admin
+    allow :developer, :of => :project
+    allow :client, :of => :project, :to => [:show]
+  end
 
   protected
   def load_new_project
@@ -20,6 +25,7 @@ class ProjectsController < ApplicationController
   public
 
   def show
+    @tickets = Ticket.for_project(@project).sort_by_name
   end
 
   def new

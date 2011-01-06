@@ -8,8 +8,8 @@ class User < ActiveRecord::Base
   acts_as_authorization_subject :association_name => :roles
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me
-  attr_accessible :first_name, :last_name, :middle_initial
+  attr_accessible :email, :password, :password_confirmation, :remember_me,
+                  :first_name, :last_name, :middle_initial
 
   validates_presence_of :first_name, :last_name
   validates_length_of :middle_initial, :is => 1
@@ -19,6 +19,7 @@ class User < ActiveRecord::Base
   # Scopes
   scope :with_unpaid_work_units, joins(:work_units).where(' work_units.paid IS NULL OR work_units.paid = "" ').group('users.id')
   scope :unlocked, where('locked_at IS NULL')
+  scope :sort_by_name, order('first_name ASC')
 
   # Return the initials of the User
   def initials
@@ -53,4 +54,8 @@ class User < ActiveRecord::Base
     locked_at?
   end
 
+  def pto_hours_left(year)
+    time = Time.parse(year+'-01-01') || Time.parse(year)
+    BigDecimal.new("40") - work_units.pto.scheduled_between(time.beginning_of_year, time.end_of_year).sum(:hours)
+  end
 end

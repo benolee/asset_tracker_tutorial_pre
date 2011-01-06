@@ -13,9 +13,13 @@
   .yui3-u-1
     .gradient_border_wrap
       .gradient_border_content
-        %h3= @user.email
+        %p.gravatar
+          = "#{show_gravatar_for(@user)}".html_safe
+        %h3 
+          = "<span>#{@user.email}</span>".html_safe
         %h3
           - if @user.locked_at?
             = t(:user_is_locked)
+        .clear    
         = render :partial => 'shared/calendar', :locals => { :start_date => Date.current.beginning_of_week, :user => @user }
         = render :partial => 'shared/calendar', :locals => { :start_date => Date.current.advance({:weeks => -1}).beginning_of_week, :user => @user }

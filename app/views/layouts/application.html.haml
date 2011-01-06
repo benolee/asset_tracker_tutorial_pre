@@ -12,6 +12,9 @@
   %body
     #header
       .wrapper
+        - if current_user
+          %a{:class => "logout", :href =>" /logout"} 
+            Logout 
         %h1
           %a{:href => "/"}
             %span= t(:company_name)

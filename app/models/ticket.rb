@@ -8,6 +8,15 @@ class Ticket < ActiveRecord::Base
   validates_presence_of :project_id
   validates_presence_of :name
 
+  scope :for_client, lambda{|client| joins({:project => [:client]}).where("clients.id = ?", client.id) }
+  scope :for_project, lambda {|project| where('project_id = ?', project.id) }
+
+  scope :sort_by_name, order('name ASC')
+
+  def self.for_user(user)
+    select {|t| t.allows_access?(user) }
+  end
+
   def client
     project.client
   end
@@ -16,15 +25,24 @@ class Ticket < ActiveRecord::Base
     name
   end
 
-  def sum_of_hours_unpaid
-    work_units.unpaid.inject(0) { |sum, n| sum + n.hours }
+  def hours
+    work_units.sum(:effective_hours)
   end
 
-  def sum_of_hours_not_invoiced
-    work_units.not_invoiced.inject(0) { |sum, n| sum + n.hours }
+  def unpaid_hours
+    work_units.unpaid.sum(:effective_hours)
+  end
+
+  def uninvoiced_hours
+    work_units.not_invoiced.sum(:effective_hours)
   end
 
   def long_name
     "Ticket: [#{id}] - #{project.name} - #{name} ticket for #{client.name}"
   end
+
+  def allows_access?(user)
+    project.accepts_roles_by?(user) || user.admin?
+  end
+
 end

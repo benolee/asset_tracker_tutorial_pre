@@ -1,35 +1,33 @@
 class Dashboard::BaseController < ApplicationController
   before_filter :get_calendar_details, :only => [:index, :calendar]
-  before_filter :load_all_projects, :only => [:index]
-  before_filter :load_all_tickets, :only => [:index]
   respond_to :html, :json, :js
 
-  def load_all_projects
-    @projects = Project.all
-  end
-
-  def load_all_tickets
-    @tickets = Ticket.all
-  end
-  public
-
   def index
-    if current_user.work_units_for_day(Date.today.prev_working_day).empty? && !Rails.env.test?
-      @message = {:title => t(:management), 
-        :body => t(:enter_time_for_previous_day)}
+    if current_user.has_role?(:developer)
+      unless current_user.work_units_for_day(Date.current.prev_working_day).any? || Rails.env.test? || admin?
+        @message = {:title => t(:management),
+          :body => t(:enter_time_for_previous_day)}
+      end
     end
 
-    @clients = Client.all
-    @tickets  ||= []
+    @clients = Client.not_inactive.sort_by_name.for_user(current_user)
+    @projects = []
+    @tickets = []
   end
 
   def client
-    @projects = Project.find(:all, :conditions => ['client_id = ?', params[:id]])
+    @projects = Project.sort_by_name.find(:all, :conditions => ['client_id = ?', params[:id]])
+    unless admin?
+      @projects = @projects.select {|p| p.allows_access?(current_user)}
+    end
     respond_with @projects
   end
 
   def project
-    @tickets = Ticket.find(:all, :conditions => ['project_id = ?', params[:id]])
+    @tickets = Ticket.sort_by_name.find(:all, :conditions => ['project_id = ?', params[:id]])
+    unless admin?
+      @tickets = @tickets.select {|t| t.allows_access?(current_user) }
+    end
     respond_with @tickets
   end
 
@@ -37,6 +35,7 @@ class Dashboard::BaseController < ApplicationController
   end
 
   private
+
   def get_calendar_details
     if params[:date].present?
       @start_date = Date.parse(params[:date]).beginning_of_week

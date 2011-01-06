@@ -1,39 +1,52 @@
 require 'spec_helper'
 
 describe WorkUnit do
-  let(:work_unit) { WorkUnit.new }
-  subject{ work_unit }
+  before { @work_unit = WorkUnit.make(:description => 'New Description') }
 
-  it 'belongs to a ticket' do
-    should belong_to(:ticket)
+  it { should have_many :comments }
+  it { should belong_to :ticket }
+  it { should belong_to :user }
+
+  it { should validate_presence_of :ticket_id }
+  it { should validate_presence_of :user_id }
+  it { should validate_presence_of :description }
+  it { should validate_presence_of :hours }
+  it { should validate_presence_of :scheduled_at }
+  it { should validate_presence_of :effective_hours }
+
+  describe '.to_s' do
+    subject { @work_unit.to_s }
+
+    it 'returns the description' do
+      should == 'New Description'
+    end
   end
 
-  it 'belongs to a user' do
-    should belong_to(:user)
+  describe 'for_client' do
+    it 'should return the proper work units for a given client' do
+      work_unit_1 = WorkUnit.make
+      ticket = work_unit_1.ticket
+      client = work_unit_1.client
+      work_unit_2 = WorkUnit.make(:ticket => ticket)
+      work_unit_3 = WorkUnit.make
+      WorkUnit.for_client(client).should == [work_unit_1, work_unit_2]
+      WorkUnit.for_client(client).include?(work_unit_3).should_not == true
+    end
   end
 
-  it 'fails validation with no ticket_id' do
-    should have(1).errors_on(:ticket_id)
-  end
-
-  it 'fails validation with no user' do
-    should have(1).errors_on(:user_id)
-  end
-
-  it 'fails validation with no description' do
-    should have(1).errors_on(:description)
-  end
-
-  it 'fails validation with no scheduled_at' do
-    should have(1).errors_on(:scheduled_at)
-  end
-
-  it 'fails validation with no hours' do
-    should have(1).errors_on(:hours)
-  end
-
-  it "allows comments" do
-    subject.respond_to?(:comments).should be true
+  describe 'email_list' do
+    it 'should return the proper list of contacts email_addresses for a given work unit' do
+      work_unit_1 = WorkUnit.make
+      ticket = work_unit_1.ticket
+      work_unit_2 = WorkUnit.make(:ticket => ticket)
+      client = work_unit_1.client
+      contact_1 = Contact.make(:receives_email => true, :client => client)
+      contact_2 = Contact.make(:receives_email => true, :client => client)
+      contact_3 = Contact.make(:receives_email => false, :client => client)
+      work_unit_3 = WorkUnit.make
+      proper_list = [contact_1.email_address, contact_2.email_address]
+      work_unit_1.email_list.should == proper_list
+    end
   end
 
   describe 'while being created' do
@@ -90,11 +103,67 @@ describe WorkUnit do
     end
   end
 
-  describe '.to_s' do
-    it 'returns the description' do
-      workunit = WorkUnit.new
-      workunit.description = 'testing'
-      workunit.to_s.should == 'testing'
+  describe '.allows_access?' do
+    before(:each) do
+      @user = User.make
+      @work_unit = WorkUnit.make
+      @project = @work_unit.project
+    end
+
+    it 'returns false if the user does not have access to the parent client' do
+      @work_unit.allows_access?(@user).should be_false
+    end
+
+    it 'returns true if the user has access to the parent client' do
+      @user.has_role!(:developer, @project)
+      @work_unit.allows_access?(@user).should be_true
+    end
+  end
+
+  describe '.validate_client_status' do
+    it 'checks to see if the client is not inactive' do
+      work_unit = WorkUnit.make_unsaved
+      client = work_unit.client
+      client.update_attribute(:status, "Inactive")
+      work_unit.save.should be_false
+      work_unit.should have(1).errors_on(:base)
+    end
+  end
+
+  describe '.set_effective_hours!' do
+    context 'when saving an overtime work unit' do
+      it 'applies the overtime_multiplier' do
+        work_unit = WorkUnit.make(:hours => 2.0, :hours_type => "Overtime")
+        work_unit.project.overtime_multiplier = 1.5
+        work_unit.save
+        work_unit.effective_hours.should == 3.0
+      end
+    end
+    context 'when saving a normal work_unit' do
+      it 'does not apply the overtime multiplier' do
+        work_unit = WorkUnit.make(:hours => 2.0, :hours_type => "Normal")
+        work_unit.project.overtime_multiplier = 1.5
+        work_unit.save
+        work_unit.effective_hours.should == 2.0
+      end
+    end
+    context 'when the client and project overtime_multiplier differ' do
+      it 'should apply the overtime multiplier for the project' do
+        work_unit = WorkUnit.make(:hours => 2.0, :hours_type => "Overtime")
+        work_unit.project.overtime_multiplier = 2.0
+        work_unit.client.overtime_multiplier = 1.5
+        work_unit.save
+        work_unit.effective_hours.should == 4.0
+      end
+    end
+    context 'with a client overtime_multiplier but no project overtime_multiplier' do
+      it 'should apply the client overtime multiplier' do
+        work_unit = WorkUnit.make(:hours => 2.0, :hours_type => "Overtime")
+        work_unit.project.overtime_multiplier = nil
+        work_unit.client.overtime_multiplier = 1.5
+        work_unit.save
+        work_unit.effective_hours.should == 3.0
+      end
     end
   end
 end

@@ -2,12 +2,19 @@ class TicketsController < ApplicationController
   before_filter :load_new_ticket, :only => [:new, :create]
   before_filter :load_ticket, :only => [:show, :edit, :update]
   before_filter :load_file_attachments, :only => [:show, :new, :create]
+  before_filter :require_access
+
+  access_control do
+    allow :admin
+    allow :developer, :of => :project
+    allow :client, :of => :project, :to => :show
+  end
 
   protected
 
   def load_new_ticket
     @ticket = Ticket.new(params[:ticket])
-    @ticket.project = Project.find(params[:project_id])
+    @ticket.project = Project.find(params[:project_id]) if params[:project_id]
   end
 
   def load_ticket
@@ -24,6 +31,7 @@ class TicketsController < ApplicationController
   end
 
   def show
+    @work_units = WorkUnit.for_ticket(@ticket).sort_by_scheduled_at
   end
 
   def edit
@@ -57,4 +65,14 @@ class TicketsController < ApplicationController
 
   def edit
   end
+
+  private
+
+  def require_access
+    unless @ticket.allows_access? current_user
+      flash[:notice] = "Access denied."
+      redirect_to root_path
+    end
+  end
+
 end

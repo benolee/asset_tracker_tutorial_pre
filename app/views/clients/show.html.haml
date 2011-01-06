@@ -7,9 +7,10 @@
       .gradient_border_content
         %ul.subnav
           %li= link_to t(:all_clients), clients_path
-          -if admin?
-            %li= link_to t(:edit_client), edit_client_path 
-          %li= link_to t(:new_project), new_project_path(:client => @client)
+          - if admin?
+            %li= link_to 'Edit Client', edit_client_path
+            %li= link_to 'New Project', new_project_path(:client => @client)
+          %li= link_to 'View Contacts', client_contacts_path(@client)
 .yui3-g
   .yui3-u-1
     .gradient_border_wrap
@@ -21,13 +22,21 @@
               %tr
                 %th= t(:projects)
                 %th= t(:tickets)
-                %th= t(:hours)
+                %th= t(:uninvoiced_hours)
+                %th= t(:total_hours)
+            %tfoot
+              %tr
+                %th= t(:all_projects)
+                %th= @client.tickets.count
+                %th= @client.uninvoiced_hours
+                %th= @client.hours
             %tbody
-              - @client.projects.each do |project|
-                %tr
+              - @projects.each do |project|
+                %tr{ :class => cycle("odd", "even") }
                   %td= link_to project, project
                   %td= project.tickets.count
-                  %td= project.tickets.inject(0) {|sum, ticket| sum + ticket.work_units.inject(0) {|sum, work_unit| sum + work_unit.hours}}
+                  %td= project.uninvoiced_hours
+                  %td= project.hours
 .yui3-g
   .yui3-u-1-2
     .gradient_border_wrap

@@ -10,19 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101102145137) do
-
-  create_table "addresses", :force => true do |t|
-    t.string   "address1"
-    t.string   "address2"
-    t.string   "city"
-    t.string   "state",            :limit => 2
-    t.string   "zipcode"
-    t.integer  "addressable_id"
-    t.string   "addressable_type"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
+ActiveRecord::Schema.define(:version => 20101228155122) do
 
   create_table "clients", :force => true do |t|
     t.string   "name"
@@ -31,6 +19,7 @@ ActiveRecord::Schema.define(:version => 20101102145137) do
     t.datetime "updated_at"
     t.string   "guid"
     t.string   "initials"
+    t.decimal  "overtime_multiplier", :precision => 10, :scale => 2
   end
 
   create_table "comments", :force => true do |t|
@@ -41,6 +30,7 @@ ActiveRecord::Schema.define(:version => 20101102145137) do
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "active"
   end
 
   add_index "comments", ["commentable_id"], :name => "index_comments_on_commentable_id"
@@ -55,6 +45,13 @@ ActiveRecord::Schema.define(:version => 20101102145137) do
     t.integer  "client_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "receives_email", :default => false
+    t.string   "street"
+    t.string   "city"
+    t.string   "state"
+    t.string   "zip"
+    t.string   "county"
+    t.string   "country"
   end
 
   create_table "file_attachments", :force => true do |t|
@@ -74,6 +71,7 @@ ActiveRecord::Schema.define(:version => 20101102145137) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "guid"
+    t.decimal  "overtime_multiplier", :precision => 10, :scale => 2
   end
 
   create_table "roles", :force => true do |t|
@@ -89,6 +87,10 @@ ActiveRecord::Schema.define(:version => 20101102145137) do
     t.integer  "role_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "site_settings", :force => true do |t|
+    t.decimal "overtime_multiplier", :precision => 10, :scale => 2
   end
 
   create_table "tickets", :force => true do |t|
@@ -119,6 +121,7 @@ ActiveRecord::Schema.define(:version => 20101102145137) do
     t.string   "last_name"
     t.string   "middle_initial"
     t.datetime "locked_at"
+    t.string   "guid"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
@@ -129,7 +132,7 @@ ActiveRecord::Schema.define(:version => 20101102145137) do
     t.integer  "ticket_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.decimal  "hours",        :precision => 10, :scale => 2
+    t.decimal  "hours",           :precision => 10, :scale => 2
     t.boolean  "overtime"
     t.datetime "scheduled_at"
     t.string   "guid"
@@ -138,6 +141,8 @@ ActiveRecord::Schema.define(:version => 20101102145137) do
     t.string   "invoiced"
     t.datetime "invoiced_at"
     t.datetime "paid_at"
+    t.decimal  "effective_hours", :precision => 10, :scale => 2
+    t.string   "hours_type"
   end
 
 end

@@ -10,7 +10,7 @@ class CommentsController < ApplicationController
   def load_comment
     @comment = Comment.find(params[:id])
   end
-  
+
   public
   def create
     @commentable = find_commentable
@@ -18,6 +18,7 @@ class CommentsController < ApplicationController
     @comment.user = current_user
     if @comment.save
       @comment.update_attributes(params[:comment])
+      @comment.update_attributes(:active => true)
       flash[:notice] = t(:comment_created_successfully)
       redirect_to_ref_url
     else
@@ -30,6 +31,15 @@ class CommentsController < ApplicationController
   end
 
   def new
+  end
+
+  def update
+    if @comment.update_attributes(:active => false)
+      flash[:notice] = "The comment has been hidden."
+      redirect_to(:back)
+    else
+      flash.now[:error] = "There was a problem hiding the comment."
+    end
   end
 
   private
