@@ -3,7 +3,7 @@ Feature: File Attachment Management
   I should be able to view and add file attachments
 
   Scenario: Add file attachments to client
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     And a client exists
     When I go to the client's page
     And I follow "Add File Attachment"
@@ -13,7 +13,7 @@ Feature: File Attachment Management
     And I should see "File Attachment created successfully" within "#flash_notice"
 
   Scenario: Add file attachments to project
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     And a project exists
     When I go to the project's page
     And I follow "Add File Attachment"
@@ -23,7 +23,7 @@ Feature: File Attachment Management
     And I should see "File Attachment created successfully" within "#flash_notice"
 
   Scenario: Add file attachments to ticket
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     And a ticket exists
     When I go to the ticket's page
     And I follow "Add File Attachment"

@@ -4,7 +4,7 @@ Feature: Project Assignment
 
   @wip
   Scenario: Assign a project to a developer
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     And a user exists with a "developer" role
     And a client "Acme" exists
     And a project exists with name: "Testproject", client: client "Acme"

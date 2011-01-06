@@ -9,7 +9,7 @@ Scenario: Total hours for each day
     Then I should see "Current: 6.0" within "#current_hours"
 
 Scenario: Non-entered time warning
-    Given I am an authenticated user with a "developer" role
+    Given I am an authenticated user with a developer role
     And I have no work units for the previous day
     When I go to the home page
     Then I should see "You have not entered any time for the previous working day." within "#message"

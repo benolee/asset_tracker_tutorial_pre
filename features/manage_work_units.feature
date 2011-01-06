@@ -5,7 +5,7 @@ Feature: Manage Work Units
 
   @javascript
   Scenario: Register new work unit
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     And a client "test client" exists with name: "test client", initials: "TTC"
     And a project "test project" exists with name: "test project", client: client "test client"
     And a ticket "test ticket" exists with project: project "test project", name: "test ticket"
@@ -21,7 +21,7 @@ Feature: Manage Work Units
 
   @javascript
   Scenario: Attempt to register a work unit on a suspended client
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     And a client "test client" exists with name: "test client", initials: "TTC", status: "Suspended"
     And a project "test project" exists with name: "test project", client: client "test client"
     And a ticket "test ticket" exists with project: project "test project", name: "test ticket"
@@ -36,7 +36,7 @@ Feature: Manage Work Units
     Then I should see "This client is suspended. Please contact an Administrator."
 
   Scenario: Edit a work unit
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     And a client "test client" exists with name: "test client", initials: "TTC", status: "Suspended"
     And a project "test project" exists with name: "test project", client: client "test client"
     And a ticket "test ticket" exists with project: project "test project", name: "test ticket"
