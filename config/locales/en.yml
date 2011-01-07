@@ -2,7 +2,7 @@
 # See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 en:
-  app_name: "Isotope11 Asset Tracker"
+  app_name: "Xrono"
   company_name: "Isotope11"
   totals: "Totals"
   current: "Current"
@@ -168,3 +168,4 @@ en:
   site_settings: "Site Settings"
   creator: "Creator"
   hours_type: "Hours Type"
+  current_site_logo: "Current site logo"
