@@ -16,5 +16,12 @@
     .gradient_border_wrap
       .gradient_border_content
         #work_unit
+          %h3= t(:creator)
+          %p= @work_unit.user
+          %h3= t(:hours)
+          %p= @work_unit.hours
+          %h3= t(:hours_type)
+          %p= @work_unit.hours_type
+          %h3= t(:description)
           %p.description= @work_unit.description
 
