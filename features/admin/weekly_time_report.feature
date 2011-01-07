@@ -3,7 +3,7 @@ Feature: Weekly Time Report
   I should be able to list users' calendars
 
   Scenario: List users with time
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     And a user exists with first_name: "Stan", last_name: "Lee", middle_initial: "M", email: "stanlee@example.com", password: "123456", password_confirmation: "123456"
     And the user "stanlee@example.com" has a "developer" role
     And a client "Test Client" exists with name: "Test Client"

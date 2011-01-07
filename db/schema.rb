@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101217152455) do
+ActiveRecord::Schema.define(:version => 20101228155122) do
 
   create_table "clients", :force => true do |t|
     t.string   "name"
@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(:version => 20101217152455) do
     t.datetime "updated_at"
     t.string   "guid"
     t.string   "initials"
+    t.decimal  "overtime_multiplier", :precision => 10, :scale => 2
   end
 
   create_table "comments", :force => true do |t|
@@ -70,6 +71,7 @@ ActiveRecord::Schema.define(:version => 20101217152455) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "guid"
+    t.decimal  "overtime_multiplier", :precision => 10, :scale => 2
   end
 
   create_table "roles", :force => true do |t|
@@ -85,6 +87,10 @@ ActiveRecord::Schema.define(:version => 20101217152455) do
     t.integer  "role_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "site_settings", :force => true do |t|
+    t.decimal "overtime_multiplier", :precision => 10, :scale => 2
   end
 
   create_table "tickets", :force => true do |t|

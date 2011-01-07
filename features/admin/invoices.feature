@@ -4,7 +4,7 @@ Feature: Invoices
 
   @javascript
   Scenario: Create an invoice
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     And a client "test client" exists with name: "test client", initials: "TTC"
     And a project "test project" exists with name: "test project", client: client "test client"
     And a ticket "test ticket" exists with project: project "test project", name: "test ticket"
@@ -18,7 +18,7 @@ Feature: Invoices
     Then I should not see "test client"
 
   Scenario: View clients with uninvoiced work units
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     And a client "test client" exists with name: "test client", initials: "TTC"
     And a project "test project" exists with name: "test project", client: client "test client"
     And a ticket "test ticket" exists with project: project "test project", name: "test ticket"

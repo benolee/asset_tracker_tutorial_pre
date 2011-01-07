@@ -4,9 +4,11 @@ class Dashboard::BaseController < ApplicationController
   respond_to :html, :json, :js
 
   def index
-    unless current_user.work_units_for_day(Date.current.prev_working_day).any? || Rails.env.test? || admin?
-      @message = {:title => t(:management),
-        :body => t(:enter_time_for_previous_day)}
+    if current_user.has_role?(:developer)
+      unless current_user.work_units_for_day(Date.current.prev_working_day).any? || admin?
+        @message = {:title => t(:management),
+          :body => t(:enter_time_for_previous_day)}
+      end
     end
 
     @clients = Client.not_inactive.sort_by_name.for_user(current_user)

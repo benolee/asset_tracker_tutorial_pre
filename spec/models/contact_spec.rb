@@ -1,22 +1,13 @@
 require 'spec_helper'
 
 describe Contact do
-  let(:contact) { Contact.new }
+  before { @contact = Contact.make }
 
-  subject{ contact }
-  
-  it 'fails validation with no first_name' do
-    should have(1).errors_on(:first_name)
-  end
+  it { should belong_to :client }
+  it { should validate_presence_of :first_name }
+  it { should validate_presence_of :last_name }
+  it { should validate_presence_of :email_address }
 
-  it 'fails validation with no last_name' do
-    should have(1).errors_on(:last_name)
-  end
-
-  it 'fails validation with no email_address' do
-    should have(1).errors_on(:email_address)
-  end
-  
   describe 'for_client' do
     it 'should return the proper list of contacts for the client' do
       contact_1 = Contact.make

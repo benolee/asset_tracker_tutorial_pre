@@ -12,7 +12,7 @@
               %th= t(:email)
           %tbody
             - @users.each do |user|
-              %tr
+              %tr{ :class => cycle("odd", "even") }
                 %td.user_img
                   = link_to "#{show_gravatar_for(user)}<span>#{user}</span>".html_safe, user
                 %td= user.email

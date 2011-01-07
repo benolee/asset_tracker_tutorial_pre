@@ -53,7 +53,7 @@
   .yui3-u-1-2
     .gradient_border_wrap
       .gradient_border_content
-        %h2= t(:files)
+        %h3= t(:files)
         %ul
           - @project.file_attachments.each do |file_attachment|
             %li= link_to file_attachment.attachment_file_file_name, file_attachment_path(file_attachment.id)

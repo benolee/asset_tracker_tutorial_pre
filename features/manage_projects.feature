@@ -22,7 +22,7 @@ Feature: Manage projects
     Then I should see a link with text "Edit"
 
   Scenario: Edit a project
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     Given a client "test client2" exists
     And a project exists with name: "test project", client: client "test client2"
     When I am on the client's page
@@ -33,7 +33,7 @@ Feature: Manage projects
     Then I should see "project 2"
 
   Scenario: Edit a project - invalid
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     Given a client "test client2" exists
     And a project exists with name: "test project", client: client "test client2"
     And I am assigned to the project
@@ -45,7 +45,7 @@ Feature: Manage projects
     Then I should see "There was a problem saving the project."
 
   Scenario: Register new project
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     Given a client "test client" exists
     Given I am on the client's page
     And I follow "New Project"
@@ -55,7 +55,7 @@ Feature: Manage projects
     Then I should see "name 1"
 
   Scenario: Register new project - invalid
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     Given a client "test client" exists
     Given I am on the client's page
     And I follow "New Project"

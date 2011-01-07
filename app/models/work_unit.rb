@@ -58,7 +58,7 @@ class WorkUnit < ActiveRecord::Base
   end
 
   def not_invoiced?
-    invoiced.empty?
+    invoiced.blank?
   end
 
   def to_s
@@ -69,14 +69,25 @@ class WorkUnit < ActiveRecord::Base
     project.accepts_roles_by?(user) || user.has_role?(:admin)
   end
 
+  def overtime_multiplier
+    if ticket && project && project.overtime_multiplier
+      project.overtime_multiplier
+    elsif client && client.overtime_multiplier
+      client.overtime_multiplier
+    elsif SiteSettings.first && SiteSettings.first.overtime_multiplier
+      SiteSettings.first.overtime_multiplier
+    else
+      BigDecimal.new("1.5")
+    end
+  end
+
   def set_effective_hours!
     if hours
       if hours_type == "Overtime"
-        self.effective_hours = hours * BigDecimal.new("1.5")
+        self.effective_hours = hours * overtime_multiplier
       else
         self.effective_hours = hours
       end
     end
   end
-
 end

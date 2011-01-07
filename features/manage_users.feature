@@ -3,7 +3,7 @@ Feature: User Administration
   I should be able to manage users
 
   Scenario: List users (admin role)
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     Given the following user records:
       | first_name | last_name | middle_initial | email             | password  | role  |
       | admin      | mcadmin   | a              | admin@example.com | secret    | admin |
@@ -17,14 +17,14 @@ Feature: User Administration
     And I should see "You must be an admin to do that." within "#flash_error"
 
   Scenario: View a user
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     Given a user exists with first_name: "Test", last_name: "Man", middle_initial: "T", email: "test@example.com", password: "secret", password_confirmation: "secret"
     When I go to the user's page
     Then I should see "Test T Man"
     And I should see "test@example.com"
 
   Scenario: Edit a user
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     Given a user exists with first_name: "Test", last_name: "Man", middle_initial: "T", email: "test@example.com", password: "secret", password_confirmation: "secret"
     When I go to the admin user's edit page
     Then I should see "First name"
@@ -35,7 +35,7 @@ Feature: User Administration
     And I should see "Locked"
 
   Scenario: Register new user
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     Given I am on the admin user's new page
     When I fill in "First name" with "name 1"
     And I fill in "Last name" with "man"
@@ -47,7 +47,7 @@ Feature: User Administration
     Then I should see "Name 1 M Man"
 
   Scenario: Register new user - the form
-    Given I am an authenticated user with an "admin" role
+    Given I am an authenticated user with an admin role
     When I am on the admin user's new page
     Then I should see a link with text "Cancel"
 

@@ -8,5 +8,4 @@ Feature: Send Email to Client after Work Unit Creation
     And a ticket "test ticket" exists with project: project "test project", name: "test ticket"
     When I create a work unit with ticket "test ticket"
     Then 1 email should be delivered bcc to "testcontact@example.com"
-    And the first email should contain "Isotope"
-
+    And the first email should contain "Xrono"

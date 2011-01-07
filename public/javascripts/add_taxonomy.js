@@ -82,18 +82,22 @@ $("#new_work_unit").submit(function() {
        },
     success: function(result)
     {
-      var json = $.parseJSON( result.responseText )
+      var notice = result.notice
       me.trigger("reset");
       me.effect("highlight");
       // Ask the calendar to update itself
       update_calendar_block();
       $('#scheduled_at').datepicker('setDate', new Date());
       $('#schedule_modal_link').text($('#scheduled_at').val());
+      if(notice) {
+        $("#work_unit_errors").data('notice', notice);
+        $("#work_unit_errors").dialog('open');
+      };
     },
     error: function(result)
     {
-      var json = $.parseJSON( result.responseText )
-      $("#work_unit_errors").data('errors', json);
+      var errors = result.errors
+      $("#work_unit_errors").data('errors', errors);
       $("#work_unit_errors").dialog('open');
     }
   });
@@ -104,15 +108,20 @@ $("#new_work_unit").submit(function() {
 $("#work_unit_errors").dialog( {
   autoOpen: false,
   hide: true,
-  title: "Error",
+  title: "Notice",
   modal: true,
   draggable: false,
   open: function() {
-    var dialog = $("#work_unit_errors")
-    dialog.html("")
-    $.each( dialog.data('errors'), function() {
-      dialog.append("<p>" + this + "</p>")
-    });
+    var dialog = $("#work_unit_errors");
+    dialog.html("");
+    if(dialog.data('errors')) {
+      $.each( dialog.data('errors'), function() {
+        dialog.append("<p>" + this + "</p>")
+      });
+    };
+    if(dialog.data('notice')) {
+      dialog.append("<p>" + dialog.data('notice') + "</p>")
+    };
   },
   close: function() {
     var dialog = $("#work_unit_errors")

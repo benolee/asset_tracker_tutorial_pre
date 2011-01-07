@@ -1,195 +1,174 @@
 require 'spec_helper'
 
 describe User do
+  let(:user) { User.make }
+  let(:user2) { User.make }
+  let(:work_unit1) { WorkUnit.make(:user => user) }
+  let(:work_unit2) { WorkUnit.make(:user => user) }
+  let(:work_unit3) { WorkUnit.make(:user => user) }
 
-  let(:user) { User.new }
+  it { should validate_presence_of :first_name }
+  it { should validate_presence_of :last_name }
 
-  describe 'before create' do
+  describe '#with_unpaid_work_units' do
+    subject { User.with_unpaid_work_units }
 
-    it 'fails validation with no first name' do
-      should have(1).errors_on(:first_name)
+    before do
+      work_unit1.update_attributes(:paid => nil, :paid_at => nil)
+      work_unit2.update_attributes(:paid => nil, :paid_at => nil)
     end
 
-    it 'fails validation with no last name' do
-      should have(1).errors_on(:last_name)
+    it 'should return a collection of users who have unpaid work units' do
+      should == [user]
+    end
+  end
+
+  describe '#unlocked' do
+    subject { User.unlocked }
+
+    before { user.unlock_access! }
+
+    it 'should return a collection of users who are not locked' do
+      should == [user]
+    end
+  end
+
+  describe '#sort_by_name' do
+    subject { User.sort_by_name }
+
+    before do
+      user.update_attribute(:first_name, 'Aaron')
+      user2.update_attribute(:first_name, 'Zed')
     end
 
-    it 'fails validation with no middle initial' do
-      should have(1).errors_on(:middle_initial)
+    it 'should return a collection of users sorted by first name' do
+      should == [user, user2]
+    end
+  end
+
+  describe '.initials' do
+    subject { user.initials }
+
+    before { user.update_attributes(:first_name => 'Aaron', :middle_initial => 'B', :last_name => 'Crenshaw') }
+
+    it 'should return the initials of the user' do
+      should == 'ABC'
+    end
+  end
+
+  describe '.work_units_for_day' do
+    subject { user.work_units_for_day(Date.current) }
+
+    before do
+      work_unit1.update_attributes(:scheduled_at => Date.current)
+      work_unit2.update_attributes(:scheduled_at => Date.yesterday)
     end
 
-    it 'should have many work units' do
-      should have_many(:work_units)
+    it 'should return a collection of work units for the user scheduled on a given day' do
+      should == [work_unit1]
+    end
+  end
+
+  describe '.clients_for_day' do
+    subject { user.clients_for_day(Date.current) }
+
+    before do
+      work_unit1.update_attributes(:scheduled_at => Date.current)
+      work_unit2.update_attributes(:scheduled_at => Date.yesterday)
     end
 
+    context 'when the user has work units scheduled for a given day' do
+      it 'should return a collection of clients for those work units' do
+        should == [work_unit1.client]
+      end
+    end
+  end
+
+  describe '.work_units_for_week' do
+    subject { user.work_units_for_week(Date.current) }
+
+    before do
+      work_unit1.update_attributes(:scheduled_at => Date.current)
+      work_unit2.update_attributes(:scheduled_at => Date.current - 1.week)
+    end
+
+    it 'should return a collection of work units for the user scheduled during the week of a given day' do
+      should == [work_unit1]
+    end
+  end
+
+  describe '.unpaid_work_units' do
+    subject { user.unpaid_work_units }
+
+    before do
+      work_unit1.update_attributes(:paid => nil, :paid_at => nil)
+      work_unit2.update_attributes(:paid => 'True', :paid_at => Date.current)
+      work_unit3.update_attributes(:user => user2)
+    end
+
+    it 'should return a collection of work units which are unpaid and belong to the user' do
+      should == [work_unit1]
+    end
+  end
+
+  describe '.to_s' do
+    subject { user.to_s }
+
+    before { user.update_attributes(:first_name => 'Aaron', :middle_initial => 'B', :last_name => 'Crenshaw') }
+
+    it 'should return the first name, middle initial, and last name for the user' do
+      should == 'Aaron B Crenshaw'
+    end
+  end
+
+  describe '.admin?' do
+    subject { user.admin? }
+
+    context 'when the user has an admin role' do
+      before { user.has_role!(:admin) }
+      it { should be_true }
+    end
+
+    context 'when the user does not have an admin role' do
+      before { user.has_no_role!(:admin) }
+      it { should be_false }
+    end
+  end
+
+  describe '.locked' do
+    subject { user.locked }
+
+    context 'when the user is locked' do
+      before { user.lock_access! }
+      it { should be_true }
+    end
+
+    context 'when the user is unlocked' do
+      before { user.unlock_access! }
+      it { should be_false }
+    end
+  end
+
+  describe '.pto_hours_left' do
+    subject { user.pto_hours_left('2011') }
+
+    before do
+      work_unit1.update_attributes(:hours => 2, :hours_type => 'PTO', :scheduled_at => '2011-01-01')
+      work_unit2.update_attributes(:hours => 3, :hours_type => 'PTO', :scheduled_at => '2011-12-31')
+      work_unit3.update_attributes(:hours => 5, :hours_type => 'PTO', :scheduled_at => '2010-12-31')
+    end
+
+    it 'should return the number of PTO hours left for the given year' do
+      should == 35
+    end
   end
 
   describe 'while being created' do
-
     it 'should create a new user from the blueprint' do
       lambda do
         User.make
       end.should change(User, :count).by(1)
     end
-
   end
-
-  context 'when dealing with scopes' do
-
-    context 'and using the with_unpaid_work_units method' do
-
-      before(:each) do
-        @user = User.make
-        @work_unit = WorkUnit.make(:user => @user)
-      end
-
-      it "should have a with_unpaid_work_units method" do
-        User.respond_to?(:with_unpaid_work_units).should be true
-      end
-
-      it "should not return a user that has no work units" do
-        lazy_user = User.make
-        User.with_unpaid_work_units.include?(lazy_user).should be false
-      end
-
-      it "should return a user that has an unpaid work unit" do
-        User.with_unpaid_work_units.include?(@user).should be true
-      end
-
-      it "should not return a user that has all paid work units" do
-        @work_unit.update_attribute(:paid, 'Check 1001')
-        User.with_unpaid_work_units.include?(@user).should be false
-      end
-
-      it 'should only list a given user one time, regardless of how many unpaid work units they have' do
-        WorkUnit.make(:user => @user)
-        User.with_unpaid_work_units.to_a.count(@user).should == 1
-      end
-
-    end
-
-  end
-
-  describe 'that has a first, middle, and last name' do
-
-    let(:user) { User.make(:first_name => 'John', :middle_initial => 'T', :last_name => 'Smith') }
-
-    describe '.initials' do
-
-      it "returns the user's initials" do
-        user.initials.should == 'JTS'
-      end
-
-    end
-
-    describe '.to_s' do
-
-      it "returns the user's full name" do
-        user.to_s.should == 'John T Smith'
-      end
-
-    end
-
-    describe '.admin?' do
-
-      it 'returns true if the user is an admin' do
-        user.has_role!(:admin)
-        user.admin?.should == true
-      end
-
-    end
-
-    describe '.locked' do
-
-      it 'returns true if the user is locked' do
-        user.lock_access!
-        user.locked.should == true
-      end
-
-      it 'returns false if the user is unlocked' do
-        user.unlock_access!
-        user.locked.should be_false
-      end
-
-    end
-
-  end
-
-  describe 'that has work units' do
-
-    let(:user) { User.make }
-
-    describe '.work_units_for_day' do
-
-      it 'lists work units that are scheduled for a specified day' do
-        work_unit_1 = WorkUnit.make(:user => user)
-        work_unit_2 = WorkUnit.make(:user => user)
-        work_unit_3 = WorkUnit.make(:user => user, :scheduled_at => 3.days.ago)
-        user.work_units_for_day(Time.zone.now).should == [work_unit_1, work_unit_2]
-      end
-
-    end
-
-    describe '.work_units_for_week' do
-
-      it 'lists work units that are scheduled for a specified day' do
-        work_unit_1 = WorkUnit.make(:user => user)
-        work_unit_2 = WorkUnit.make(:user => user)
-        work_unit_3 = WorkUnit.make(:user => user, :scheduled_at => 9.days.ago)
-        user.work_units_for_week(Time.zone.now).should == [work_unit_1, work_unit_2]
-      end
-
-    end
-
-    describe '.clients_for_day' do
-
-      it 'lists clients for work units that are scheduled for a specified day' do
-        work_unit_1 = WorkUnit.make(:user => user)
-        work_unit_2 = WorkUnit.make(:user => user)
-        work_unit_3 = WorkUnit.make(:user => user, :scheduled_at => 3.days.ago)
-        user.clients_for_day(Time.zone.now).should == [work_unit_1, work_unit_2].map(&:client)
-      end
-
-    end
-
-    describe '.unpaid_work_units' do
-
-      it 'lists work units for this user that have not been paid' do
-        work_unit_1 = WorkUnit.make(:user => user)
-        work_unit_2 = WorkUnit.make(:user => user)
-        work_unit_3 = WorkUnit.make(:user => user, :paid => '111')
-        user.unpaid_work_units.should == [work_unit_1, work_unit_2]
-      end
-
-    end
-
-  end
-
-  describe '.pto_hours_left' do
-    before(:each) do
-      @user = User.make
-      @work_unit = WorkUnit.make(:user => @user, :scheduled_at => '2010-01-01')
-    end
-
-    context 'when the user has used no PTO hours for the year' do
-      it 'should return 40 hours' do
-        @user.pto_hours_left('2010').should == 40
-      end
-    end
-
-    context 'when the user has used PTO hours for the year' do
-      it 'should return the remaining PTO hours for the user' do
-        work_unit2 = WorkUnit.make(:user => @user, :scheduled_at => '2010-01-01', :hours_type => 'PTO', :hours => '3.0')
-        @user.pto_hours_left('2010').should == 37
-      end
-
-      it 'should not subtract hours for another year' do
-        work_unit2 = WorkUnit.make(:user => @user, :scheduled_at => '2009-01-01', :hours_type => 'PTO', :hours => '3.0')
-        @user.pto_hours_left('2010').should == 40
-      end
-    end
-  end
-
-  it 'methods should still work with other time zones'
 
 end
