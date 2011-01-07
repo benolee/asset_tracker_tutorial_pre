@@ -57,6 +57,7 @@ AssetTrackerTutorial::Application.routes.draw do
   get '/dashboard/client', :controller => "dashboard/base", :action => "client"
   get '/dashboard/project', :controller => "dashboard/base", :action => "project"
   get '/dashboard/recent_work', :controller => "dashboard/base", :action => "recent_work"
+  get '/dashboard/update_calendar', :controller => "dashboard/base", :action => "update_calendar"
 
   namespace :api do
     namespace :v1 do
