@@ -165,7 +165,6 @@ h3 {
     margin-bottom:0px;
     a {
       display:inline-block;
-      background: transparent url('../../images/logo.png') no-repeat left top;
       height: 116px;
       width: 262px;
       span {
@@ -342,7 +341,7 @@ h4.dashboard_title {
     &.overtime a{
       color: red;
     }
-    &.time_off a {
+    &.cto a, &.pto a {
       color: #33840c; 
     }
   }
