@@ -61,7 +61,8 @@ class Dashboard::BaseController < ApplicationController
   private
 
   def get_calendar_details
-    if params[:date].present?
+    debugger
+    if params[:date].present? && params[:date] != "null"
       @start_date = Date.parse(params[:date]).beginning_of_week
     else
       @start_date = Date.today.beginning_of_week
