@@ -15,4 +15,12 @@ class Admin::SiteSettingsController < ApplicationController
       redirect_to :back
     end
   end
+
+  def destroy
+    @site_settings.site_logo.destroy
+    if @site_settings.save
+      flash[:notice] = t(:site_logo_removed_successfully)
+      redirect_to edit_admin_site_settings_path
+    end
+  end
 end
