@@ -1,5 +1,6 @@
 class Dashboard::BaseController < ApplicationController
-  before_filter :get_calendar_details, :only => [:index, :calendar]
+  include ActionView::Helpers::SanitizeHelper
+  before_filter :get_calendar_details, :only => [:index, :calendar, :update_calendar]
   respond_to :html, :json, :js
 
   def index
@@ -30,6 +31,29 @@ class Dashboard::BaseController < ApplicationController
   end
 
   def calendar
+  end
+
+  def update_calendar
+    respond_to do |format|
+      format.js {
+        render :json => {
+          :success => true,
+          :data => render_to_string(
+            :partial => 'shared/calendar',
+            :locals => {
+              :start_date => @start_date,
+              :user => current_user
+            }
+          ),
+          :week_pagination => render_to_string(
+            :partial => 'dashboard/base/week_pagination',
+            :locals => {
+              :start_date => @start_date
+            }
+          )
+        }
+      }
+    end
   end
 
   private

@@ -135,8 +135,8 @@ ActiveRecord::Schema.define(:version => 20101217152455) do
     t.string   "invoiced"
     t.datetime "invoiced_at"
     t.datetime "paid_at"
-    t.decimal  "effective_hours", :precision => 10, :scale => 2
     t.string   "hours_type"
+    t.decimal  "effective_hours", :precision => 10, :scale => 2
   end
 
 end

@@ -216,3 +216,28 @@ function update_calendar_block(){
   });
 }
 
+// ---------- Calendar Javascript
+function get_week(week){
+  $.ajax( {
+    async: true,
+    url: '/dashboard/update_calendar?date=' + week,
+    type: 'GET',
+    dataType: 'json',
+    success: function(response){
+      $('#calendar').html(response.data);
+      $('.week_pagination').html(response.week_pagination);
+      // We have to reload the triggers since they are regenerated on each request
+      set_week_pagination_triggers();
+    }
+  });
+}
+
+function set_week_pagination_triggers(){
+  $('.get_week_calendar').click(function(e){
+    var week = /\d{4}-\d{2}-\d{2}/i.exec(this);
+    get_week(week);
+    return false;
+  });
+}
+
+set_week_pagination_triggers();
