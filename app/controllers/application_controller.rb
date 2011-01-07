@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   include RefurlHelper
+  before_filter :initialize_site_settings
   before_filter :authenticate_user!
   protect_from_forgery
   layout 'application'
@@ -40,4 +41,7 @@ class ApplicationController < ActionController::Base
     redirect_to root_path
   end
 
+  def initialize_site_settings
+    @site_settings = SiteSettings.first
+  end
 end
