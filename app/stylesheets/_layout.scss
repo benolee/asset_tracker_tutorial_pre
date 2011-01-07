@@ -24,11 +24,32 @@ html {
   //-webkit-font-smoothing: antialiased;
 }
 
+
+* + html {
+  background:#3d5263;
+}
+html {
+  background:#3d5262\0;
+}
+
 body {
   height:100%;
   background: #1a3247 no-repeat;
   @include linear-gradient(color-stops(#3f5365, #1a3247));
 }
+
+* + html body {
+  background: url('../../images/main_bg.jpg') repeat-x;
+  background-color:#3d5263;
+}
+body {
+  background: url('../../images/main_bg.jpg') repeat-x\0;
+  background-color:#3d5263\0;
+}
+
+
+
+
 
 /*--- Site Styles ---*/
 
@@ -88,6 +109,19 @@ body {
       }
     }
   }
+
+* + html .gradient_border_wrap {
+  background:#999;
+}
+* + html .gradient_border_content {
+  background:#efefef;
+}
+.gradient_border_wrap {
+  background:#999\0;
+}
+.gradient_border_content {
+  background:#efefefi\0;
+}
 p.gravatar {
   float:left;
   padding: 0 10px 0 0;
@@ -169,6 +203,55 @@ h3 {
     }
   }
 }
+
+* + html #header {
+  background: url('../../images/top_bg.jpg') repeat-x;  
+  #nav {
+    background: url('../../images/nav_bg.jpg') repeat-x;
+    ul {
+      li {
+        a {
+          height:35px;
+          &:hover {
+            background:#fff;
+            border:none;
+          }
+        }
+      }
+    }
+  }
+}
+#header {
+  background: url('../../images/top_bg.jpg') repeat-x\0;  
+}
+
+* + html #nav {
+  background: url('../../images/nav_bg.jpg') repeat-x;
+  ul {
+    li {
+      a {
+        &:hover {
+          background:#fff;
+          border:none;
+        }
+      }
+    }
+  }
+}
+#nav {
+  background: url('../../images/nav_bg.jpg') repeat-x\0;
+  ul {
+    li {
+      a {
+        &:hover {
+          background:#fff\0;
+          border:none\0;
+        }
+      }
+    }
+  }
+}
+
 
 
 #footer {
@@ -260,6 +343,14 @@ h4.dashboard_title {
       color: red;
     }
   }
+}
+
+* + html #client table th, .gradient_border_content table th, #calendar th, .users th, .clients th {
+  background:#34495c;
+}
+
+#client table th, .gradient_border_content table th, #calendar th, .users th, .clients th {
+  background:#577084\0;
 }
 
 .week_pagination {
