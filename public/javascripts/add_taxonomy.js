@@ -171,6 +171,7 @@ $("#ticket_project_id").change(function(){
 // AJAX ticket creation
 $("#new_ticket").submit(function() {
   var me = $(this);
+  $("#ticket_submit").attr('disabled', true);
   $.ajax(
   {
     async: true,
@@ -186,12 +187,14 @@ $("#new_ticket").submit(function() {
       var json = $.parseJSON( result.responseText )
       me.trigger("reset");
       me.effect("highlight");
+      $("#ticket_submit").attr('disabled', false);
     },
     error: function(result)
     {
       var json = $.parseJSON( result.responseText )
       $("#ticket_errors").data('errors', json);
       $("#ticket_errors").dialog('open');
+      $("#ticket_submit").attr('disabled', false);
     }
   });
   return false;
