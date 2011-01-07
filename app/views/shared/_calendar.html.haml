@@ -17,7 +17,7 @@
             - unless user.work_units_for_day(date).empty?
               %ul
                 - user.work_units_for_day(date).each do |work_unit|
-                  %li{:class => "#{work_unit.hours_type == "Overtime" ? 'work_unit overtime' : 'work_unit'}"}
+                  %li{:class => "work_unit " << work_unit.hours_type.downcase }
                     = link_to "#{work_unit.client.initials}: #{work_unit.effective_hours}", work_unit_path(work_unit), { :title => work_unit.description }
         %td
           %ul
