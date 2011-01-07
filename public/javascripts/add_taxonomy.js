@@ -64,6 +64,7 @@ $("#work_unit_project_id").change(function(){
 // AJAX work unit creation
 $("#new_work_unit").submit(function() {
   var me = $(this);
+  $("#work_unit_submit").attr('disabled', true);
   $.ajax(
   {
     async: true,
@@ -93,12 +94,14 @@ $("#new_work_unit").submit(function() {
         $("#work_unit_errors").data('notice', notice);
         $("#work_unit_errors").dialog('open');
       };
+      $("#work_unit_submit").attr('disabled', false);
     },
     error: function(result)
     {
       var errors = result.errors
       $("#work_unit_errors").data('errors', errors);
       $("#work_unit_errors").dialog('open');
+      $("#work_unit_submit").attr('disabled', false);
     }
   });
   return false;
