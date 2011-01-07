@@ -25,9 +25,6 @@ html {
 }
 
 
-* + html {
-  background:#3d5263;
-}
 html {
   background:#3d5262\0;
 }
@@ -38,10 +35,6 @@ body {
   @include linear-gradient(color-stops(#3f5365, #1a3247));
 }
 
-* + html body {
-  background: url('../../images/main_bg.jpg') repeat-x;
-  background-color:#3d5263;
-}
 body {
   background: url('../../images/main_bg.jpg') repeat-x\0;
   background-color:#3d5263\0;
@@ -110,12 +103,6 @@ body {
     }
   }
 
-* + html .gradient_border_wrap {
-  background:#999;
-}
-* + html .gradient_border_content {
-  background:#efefef;
-}
 .gradient_border_wrap {
   background:#999\0;
 }
@@ -203,40 +190,10 @@ h3 {
   }
 }
 
-* + html #header {
-  background: url('../../images/top_bg.jpg') repeat-x;  
-  #nav {
-    background: url('../../images/nav_bg.jpg') repeat-x;
-    ul {
-      li {
-        a {
-          height:35px;
-          &:hover {
-            background:#fff;
-            border:none;
-          }
-        }
-      }
-    }
-  }
-}
 #header {
   background: url('../../images/top_bg.jpg') repeat-x\0;  
 }
 
-* + html #nav {
-  background: url('../../images/nav_bg.jpg') repeat-x;
-  ul {
-    li {
-      a {
-        &:hover {
-          background:#fff;
-          border:none;
-        }
-      }
-    }
-  }
-}
 #nav {
   background: url('../../images/nav_bg.jpg') repeat-x\0;
   ul {
@@ -345,10 +302,6 @@ h4.dashboard_title {
       color: #33840c; 
     }
   }
-}
-
-* + html #client table th, .gradient_border_content table th, #calendar th, .users th, .clients th {
-  background:#34495c;
 }
 
 #client table th, .gradient_border_content table th, #calendar th, .users th, .clients th {
