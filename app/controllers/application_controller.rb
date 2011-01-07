@@ -42,6 +42,6 @@ class ApplicationController < ActionController::Base
   end
 
   def initialize_site_settings
-    @site_settings = SiteSettings.first
+    @site_settings = SiteSettings.first ? SiteSettings.first : SiteSettings.create
   end
 end

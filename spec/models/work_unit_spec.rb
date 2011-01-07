@@ -337,7 +337,7 @@ describe WorkUnit do
 
     let(:project) { work_unit.project }
     let(:client) { work_unit.client }
-    let(:site_settings) { SiteSettings.first }
+    let(:site_settings) { SiteSettings.create }
 
     context 'when the project and client have an overtime multiplier' do
       before do

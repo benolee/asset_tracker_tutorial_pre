@@ -22,9 +22,6 @@ Sham.define do
   last_name(:unique => false)           { Faker::Name.last_name }
   # Site Settings
   overtime_multiplier(:unique => false) { rand(3) + 1 }
-  # Comment
-  title(:unique => false)               { Faker::Lorem.words }
-  comment(:unique => false)             { Faker::Lorem.paragraph }
 end
 
 Contact.blueprint do
@@ -67,7 +64,6 @@ WorkUnit.blueprint do
   hours
   scheduled_at
   hours_type
-  SiteSettings.create(:overtime_multiplier => 1.5) unless SiteSettings.first
 end
 
 WorkUnit.blueprint(:paid) do
@@ -80,11 +76,4 @@ end
 
 SiteSettings.blueprint do
   overtime_multiplier
-end
-
-Comment.blueprint do
-  title
-  comment
-  user { User.make }
-  active { true }
 end
