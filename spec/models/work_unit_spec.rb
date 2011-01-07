@@ -337,13 +337,13 @@ describe WorkUnit do
 
     let(:project) { work_unit.project }
     let(:client) { work_unit.client }
-    let(:site_settings) { SiteSettings.make }
+    let(:site_settings) { SiteSettings.first }
 
     context 'when the project and client have an overtime multiplier' do
       before do
-        project.overtime_multiplier = 3
-        client.overtime_multiplier = 2.5
-        site_settings.overtime_multiplier = 2
+        project.update_attribute(:overtime_multiplier, 3.0)
+        client.update_attribute(:overtime_multiplier, 2.5)
+        site_settings.update_attribute(:overtime_multiplier, 2.0)
       end
 
       it 'should return the project overtime multiplier' do
@@ -353,8 +353,9 @@ describe WorkUnit do
 
     context 'when the client has an overtime multiplier' do
       before do
-        client.overtime_multiplier = 2.5
-        site_settings.overtime_multiplier = 2
+        project.update_attribute(:overtime_multiplier, nil)
+        client.update_attribute(:overtime_multiplier, 2.5)
+        site_settings.update_attribute(:overtime_multiplier, 2.0)
       end
 
       it 'should return the client overtime multiplier' do
@@ -364,7 +365,9 @@ describe WorkUnit do
 
     context 'when neither the project nor the client have an overtime multiplier' do
       before do
-        site_settings.overtime_multiplier = 2
+        project.update_attribute(:overtime_multiplier, nil)
+        client.update_attribute(:overtime_multiplier, nil)
+        site_settings.update_attribute(:overtime_multiplier, 2.0)
       end
 
       it 'should return the site settings overtime multiplier' do
@@ -388,7 +391,7 @@ describe WorkUnit do
   describe '.set_effective_hours!' do
     context 'when saving an overtime work unit' do
       before do
-        work_unit.project.overtime_multiplier = 1.5
+        work_unit.project.update_attribute(:overtime_multiplier, 1.5)
         work_unit.update_attributes(:hours => 2, :hours_type => 'Overtime')
       end
 
@@ -399,7 +402,7 @@ describe WorkUnit do
 
     context 'when saving a normal work_unit' do
       before do
-        work_unit.project.overtime_multiplier = 1.5
+        work_unit.project.update_attribute(:overtime_multiplier, 1.5)
         work_unit.update_attributes(:hours => 2, :hours_type => 'Normal')
       end
 

@@ -166,3 +166,5 @@ en:
   total_outstanding_hours: "total outstanding hours"
   pto_left: "PTO Left"
   site_settings: "Site Settings"
+  creator: "Creator"
+  hours_type: "Hours Type"
