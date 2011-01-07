@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101228155122) do
+ActiveRecord::Schema.define(:version => 20110107190927) do
 
   create_table "clients", :force => true do |t|
     t.string   "name"
@@ -90,7 +90,11 @@ ActiveRecord::Schema.define(:version => 20101228155122) do
   end
 
   create_table "site_settings", :force => true do |t|
-    t.decimal "overtime_multiplier", :precision => 10, :scale => 2
+    t.decimal  "overtime_multiplier",    :precision => 10, :scale => 2
+    t.string   "site_logo_file_name"
+    t.string   "site_logo_content_type"
+    t.integer  "site_logo_file_size"
+    t.datetime "site_logo_updated_at"
   end
 
   create_table "tickets", :force => true do |t|
@@ -141,8 +145,8 @@ ActiveRecord::Schema.define(:version => 20101228155122) do
     t.string   "invoiced"
     t.datetime "invoiced_at"
     t.datetime "paid_at"
-    t.decimal  "effective_hours", :precision => 10, :scale => 2
     t.string   "hours_type"
+    t.decimal  "effective_hours", :precision => 10, :scale => 2
   end
 
 end
