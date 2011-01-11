@@ -54,8 +54,9 @@ class User < ActiveRecord::Base
     locked_at?
   end
 
-  def pto_hours_left(year)
-    time = Time.zone.parse(year+'-01-01') || Time.zone.parse(year)
+  def pto_hours_left(date)
+    raise "Date must be a date object" unless date.is_a?(Date)
+    time = date.to_time_in_current_zone
     SiteSettings.first.total_yearly_pto_per_user - work_units.pto.scheduled_between(time.beginning_of_year, time.end_of_year).sum(:hours)
   end
 end

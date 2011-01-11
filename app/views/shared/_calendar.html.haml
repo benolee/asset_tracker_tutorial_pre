@@ -22,5 +22,5 @@
         %td
           %ul
             %li#current_hours= "#{t(:current)}: #{user.unpaid_work_units.sum(:effective_hours)}"
-            %li#pto_left= "#{t(:pto_left)}: #{user.pto_hours_left(start_date.to_s)}"
+            %li#pto_left= "#{t(:pto_left)}: #{user.pto_hours_left(start_date)}"
 
