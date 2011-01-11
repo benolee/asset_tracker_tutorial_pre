@@ -76,4 +76,5 @@ end
 
 SiteSettings.blueprint do
   overtime_multiplier
+  total_yearly_pto_per_user { 40 }
 end
