@@ -17,6 +17,9 @@
             = f.label :overtime_multiplier
             = f.text_field :overtime_multiplier
           .field_wrap
+            = f.label :total_yearly_pto_per_user
+            = f.text_field :total_yearly_pto_per_user
+          .field_wrap
             = f.submit 'Update', :class => 'add_new_button'
             = link_to 'Cancel', admin_path, :class => 'cancel_button'
 
