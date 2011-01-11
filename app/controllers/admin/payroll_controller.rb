@@ -14,7 +14,7 @@ class Admin::PayrollController < ApplicationController
   def update
     params[:work_unit].each do |key, value|
       if key =~ /\d+/
-        unless value.empty?
+        unless value.blank?
           work_unit = WorkUnit.find(key.to_i)
           if work_unit
             work_unit.update_attributes(:paid => value)
