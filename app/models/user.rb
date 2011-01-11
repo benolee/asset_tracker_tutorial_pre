@@ -56,6 +56,6 @@ class User < ActiveRecord::Base
 
   def pto_hours_left(year)
     time = Time.zone.parse(year+'-01-01') || Time.zone.parse(year)
-    BigDecimal.new("40") - work_units.pto.scheduled_between(time.beginning_of_year, time.end_of_year).sum(:hours)
+    SiteSettings.first.total_yearly_pto_per_user - work_units.pto.scheduled_between(time.beginning_of_year, time.end_of_year).sum(:hours)
   end
 end
