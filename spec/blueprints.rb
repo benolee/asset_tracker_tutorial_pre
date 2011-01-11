@@ -9,8 +9,8 @@ Sham.define do
   middle_initial(:unique => false)      { ('a'..'z').to_a.rand.capitalize }
   last_name(:unique => false)           { Faker::Name.last_name }
   # Client, Project, Ticket
-  name                                  { Faker::Company.name }
-  initials(:unique => true)             { Array.new(3) { (rand(122-97) + 65).chr}.join }
+  name                                  { [ Faker::Name.last_name, Faker::Name.last_name, Faker::Company.suffix ].join(' ') }
+  initials(:unique => true)             { name.scan(/([A-Z])/).join }
   # Work Unit
   description(:unique => false)         { Faker::Company.bs }
   hours(:unique => false)               { rand(5) + 1}
@@ -42,7 +42,7 @@ end
 
 Client.blueprint do
   name
-  initials
+  initials { name.scan(/([A-Z])/).join.first(3) }
   status { 'Active' }
 end
 
