@@ -18,10 +18,14 @@ end
 puts "done"
 
 # Create several developer accounts
+print "Creating users..."
 User.make(:email => 'admin@xrono.org', :password => '123456', :password_confirmation => '123456').has_role!(:admin)
-User.make(:email => 'dev@xrono.org', :password => '123456', :password_confirmation => '123456').has_role!(:developer)
-User.make(:email => 'locked@xrono.org', :password => '123456', :password_confirmation => '123456').has_role!(:developer)
+User.make(:email => 'dev@xrono.org', :password => '123456', :password_confirmation => '123456').has_role!(:developer, Project.all.shuffle.first)
+User.find_by_email('dev@xrono.org').has_role!(:developer, Project.all.shuffle.first)
+User.make(:email => 'locked@xrono.org', :password => '123456', :password_confirmation => '123456')
+User.make(:email => 'client@xrono.org', :password => '123456', :password_confirmation => '123456').has_role!(:client, Project.all.shuffle.first)
 8.times { User.make.has_role!(:developer, Project.all[rand(Project.all.count)]) }
+puts "done"
 
 # Create 2 tickets per project
 print "Creating tickets..."
@@ -32,11 +36,13 @@ puts "done"
 
 # Create a bunch of work units
 print "Creating work units..."
-Ticket.all.each do |ticket|
-  20.times { WorkUnit.make(:ticket => ticket,
-                           :user => User.all.sort_by{ rand }.first,
-                           :scheduled_at => Date.current.beginning_of_week + (-6..6).to_a.shuffle.first.days ) }
+
+User.all.each do |user|
+  20.times { WorkUnit.make(:ticket => Ticket.for_user(user).shuffle.first,
+                           :user => user,
+                           :scheduled_at => Date.current.beginning_of_week + (-6..6).to_a.shuffle.first.days ) } unless Ticket.for_user(user).empty?
 end
+
 puts "done"
 
 # Create 2 contacts per client
