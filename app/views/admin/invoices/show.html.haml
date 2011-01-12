@@ -33,7 +33,8 @@
                       %tr{ :class => cycle("odd", "even") }
                         %td= wu.description.gsub(/\n/,"<br />&nbsp;&nbsp;").html_safe
                         %td= wu.user.first_name
-                        %td= wu.scheduled_at.strftime("%F")
+                        %td{:class => wu.scheduled_at.future? ? "future" : "" }
+                          = wu.scheduled_at.strftime("%F")
                         %td= wu.effective_hours
                         %td
                         %td

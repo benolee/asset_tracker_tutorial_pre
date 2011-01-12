@@ -295,7 +295,7 @@ h4.dashboard_title {
     } 
   }
   .work_unit{
-    &.overtime a{
+    &.overtime a {
       color: red;
     }
     &.cto a, &.pto a {
@@ -558,4 +558,8 @@ ul {
 
 .clear {
   clear:both;
+}
+
+.future {
+  color: red;
 }
