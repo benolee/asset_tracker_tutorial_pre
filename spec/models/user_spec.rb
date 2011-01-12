@@ -150,7 +150,7 @@ describe User do
   end
 
   describe '.pto_hours_left' do
-    subject { user.pto_hours_left('2011') }
+    subject { user.pto_hours_left(Date.parse('2011-01-01')) }
 
     let(:site_settings) { SiteSettings.make }
 
