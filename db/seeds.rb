@@ -8,58 +8,85 @@
 
 require File.expand_path(File.dirname(__FILE__) + "../../spec/blueprints")
 
+def it_is_foretold
+  [true,false].rand
+end
+
+# Clients #
+
 4.times { Client.make }
 Client.make status: 'Suspended'
-Client.make status: 'Inactive'
+
+
+# Projects #
 
 for client in Client.all do
-  4.times { Project.make client: client, name: Faker::Internet.domain_name.humanize }
+  4.times { Project.make client: client }
 end
 
-admin = User.make(:email => 'admin@xrono.org', :password => '123456', :password_confirmation => '123456')
-dev = User.make(:email => 'dev@xrono.org', :password => '123456', :password_confirmation => '123456')
-locked = User.make(:email => 'locked@xrono.org', :password => '123456', :password_confirmation => '123456')
-client = User.make(:email => 'client@xrono.org', :password => '123456', :password_confirmation => '123456')
 
-admin.has_role!(:admin)
-dev.has_role!(:developer, Client.all.first.projects.first)
-dev.has_role!(:developer, Client.all.first.projects.second)
-dev.has_role!(:developer, Client.all.second.projects.first)
-dev.has_role!(:developer, Client.all.third.projects.first)
-locked.lock_access!
-client.has_role!(:client, Client.all.first.projects.first)
-client.has_role!(:client, Client.all.first.projects.second)
-client.has_role!(:client, Client.all.third.projects.third)
-client.has_role!(:client, Client.all.fourth.projects.fourth)
-
-8.times { User.make.has_role! :developer, Project.all.shuffle.first }
+# Tickets #
 
 for project in Project.all do
-  4.times { Ticket.make project: project, name: Faker::Lorem.words(2).join(' ').capitalize, description: Faker::Lorem.sentence }
+  4.times { Ticket.make project: project }
 end
 
-users = User.unlocked
-clients = Client.not_inactive
-tickets = clients.map(&:tickets).flatten
-dates = ((Date.current.beginning_of_week - 1.week)..(Date.current.end_of_week))
 
-for user in users do
-  unless tickets.empty?
-    for date in dates do
-      until WorkUnit.scheduled_between(date, date + 1.day).for_user(user).sum(:hours) > 5
-        hours = BigDecimal("0.1")*rand(9) + rand(3) + 1
-        WorkUnit.create ticket: tickets.shuffle.first, description: Faker::Lorem.paragraph, scheduled_at: date, user: user, hours: hours, hours_type: "Normal"
-      end
+# Users #
+
+admin_user     = User.make :email => 'admin@xrono.org'
+developer_user = User.make :email => 'dev@xrono.org'
+locked_user    = User.make :email => 'locked@xrono.org'
+client_user    = User.make :email => 'client@xrono.org'
+
+developers = [ admin_user, developer_user ]
+8.times { developers.push User.make }
+
+
+# Roles #
+
+admin_user.has_role!(:admin)
+
+locked_user.lock_access!
+
+for project in Project.all do
+  developers.each { |developer| developer.has_role!(:developer, project) if it_is_foretold }
+  client_user.has_role!(:client, project) if it_is_foretold
+end
+
+
+# Work Units #
+
+date_range = (( Date.current.monday.advance weeks: -3 )..( Date.current.end_of_week ))
+this_friday = Date.current.monday + 4
+
+for date in date_range do
+  for user in developers do
+    tickets = Ticket.for_user user
+
+    unless tickets.empty?
+      4.times { WorkUnit.make user: user,
+                              ticket: tickets.rand,
+                              scheduled_at: date.to_s,
+                              hours_type: 'Normal' } unless date.saturday? or date.sunday? or date == this_friday
     end
-
-    3.times do
-      date = dates.to_a.shuffle.first
-      hours = BigDecimal("0.1")*rand(9) + rand(3) + 1
-      WorkUnit.create ticket: tickets.shuffle.first, description: "Overtime", scheduled_at: date, user: user, hours: hours, hours_type: "Overtime"
-    end
-
-    date = Date.current.beginning_of_week+4.days
-    WorkUnit.scheduled_between(date,date+1.day).for_user(user).destroy_all
-    WorkUnit.create ticket: tickets.shuffle.first, description: "National holiday", scheduled_at: date, user: user, hours: 8, hours_type: "CTO"
   end
+end
+
+WorkUnit.scheduled_between(Date.current.advance weeks: -4, Date.current.end_of_week.advance weeks: -2).update_attributes paid: "0987", paid_at: Date.current.to_time, invoiced: "6543", invoiced_at: Date.current.to_time
+
+for user in developers do
+  tickets = Ticket.for_user user
+  unless tickets.empty?
+    WorkUnit.make user: user, ticket: tickets.rand, scheduled_at: date_range.last.to_s, hours_type: 'Overtime', hours: 4
+    WorkUnit.make user: user, ticket: tickets.rand, scheduled_at: this_friday.to_s, hours_type: 'CTO', hours: 8
+  end
+end
+
+Client.make status: 'Inactive'
+
+# Comments #
+
+for client in Client.all do
+  4.times { Comment.make user_id: developers.rand.id, commentable_id: client.id }
 end
