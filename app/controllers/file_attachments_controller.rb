@@ -1,9 +1,10 @@
 class FileAttachmentsController < ApplicationController
-  before_filter :load_new_file_attachment, :only => [:new, :create]
+  before_filter :load_new_file_attachment, :only => [:new]
   before_filter :load_file_attachment, :only => [:show]
   before_filter :get_referrer, :only => [:create]
 
   protected
+
   def load_new_file_attachment
     @file_attachment = FileAttachment.new(params[:file_attachment])
     if params[:ticket_id]
@@ -39,6 +40,22 @@ class FileAttachmentsController < ApplicationController
   end
 
   def create
+
+    file = params[:file_attachment][:attachment_file].tempfile
+    sha = Digest::SHA1.hexdigest(file.read)
+    @file_attachment = FileAttachment.new(params[:file_attachment] )
+    @file_attachment.sha = sha
+
+    if params[:ticket_id]
+      @file_attachment.ticket_id = params[:ticket_id]
+    end
+    if params[:client_id]
+      @file_attachment.client_id = params[:client_id]
+    end
+    if params[:project_id]
+      @file_attachment.project_id = params[:project_id]
+    end
+
     if @file_attachment.save
       flash[:notice] = t(:file_attachment_created_successfully)
       redirect_to @referrer_path
