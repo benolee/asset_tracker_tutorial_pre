@@ -20,14 +20,14 @@ Client.make status: 'Suspended'
 
 # Projects #
 
-for client in Client.all do
+Client.all.each do |client|
   4.times { Project.make client: client }
 end
 
 
 # Tickets #
 
-for project in Project.all do
+Project.all.each do |project|
   4.times { Ticket.make project: project }
 end
 
@@ -49,7 +49,7 @@ admin_user.has_role!(:admin)
 
 locked_user.lock_access!
 
-for project in Project.all do
+Project.all.each do |project|
   developers.each { |developer| developer.has_role!(:developer, project) if it_is_foretold }
   client_user.has_role!(:client, project) if it_is_foretold
 end
@@ -57,36 +57,48 @@ end
 
 # Work Units #
 
-date_range = (( Date.current.monday.advance weeks: -3 )..( Date.current.end_of_week ))
-this_friday = Date.current.monday + 4
+monday = Date.current.monday
+friday = monday + 4
+two_weeks_ago = monday.advance(weeks: -1)
+four_weeks_ago = two_weeks_ago.advance(weeks: -2)
 
-for date in date_range do
-  for user in developers do
+(four_weeks_ago..friday).each do |date|
+  developers.each do |user|
     tickets = Ticket.for_user user
 
-    unless tickets.empty?
+    unless tickets.empty? or date.saturday? or date.sunday? or date == friday
       4.times { WorkUnit.make user: user,
                               ticket: tickets.rand,
                               scheduled_at: date.to_s,
-                              hours_type: 'Normal' } unless date.saturday? or date.sunday? or date == this_friday
+                              hours_type: 'Normal' }
     end
   end
 end
 
-WorkUnit.scheduled_between(Date.current.advance weeks: -4, Date.current.end_of_week.advance weeks: -2).update_attributes paid: "0987", paid_at: Date.current.to_time, invoiced: "6543", invoiced_at: Date.current.to_time
-
-for user in developers do
-  tickets = Ticket.for_user user
-  unless tickets.empty?
-    WorkUnit.make user: user, ticket: tickets.rand, scheduled_at: date_range.last.to_s, hours_type: 'Overtime', hours: 4
-    WorkUnit.make user: user, ticket: tickets.rand, scheduled_at: this_friday.to_s, hours_type: 'CTO', hours: 8
-  end
+WorkUnit.scheduled_between(four_weeks_ago, two_weeks_ago).each do |work_unit|
+  work_unit.update_attributes paid: "0987",
+                              paid_at: Date.current.to_time,
+                              invoiced: "6543",
+                              invoiced_at: Date.current.to_time
 end
 
-Client.make status: 'Inactive'
+developers.each do |user|
+  tickets = Ticket.for_user user
+  unless tickets.empty?
+    WorkUnit.make user: user, ticket: tickets.rand, scheduled_at: monday.end_of_week.to_time, hours_type: 'Overtime', hours: 4
+    WorkUnit.make user: user, ticket: tickets.rand, scheduled_at: friday.to_time, hours_type: 'CTO', hours: 8
+  end
+  user.work_units.scheduled_between(monday,monday+2).sample.update_attribute(:hours_type,'PTO')
+end
+
+
 
 # Comments #
 
-for client in Client.all do
+Client.all.each do |client|
   4.times { Comment.make user_id: developers.rand.id, commentable_id: client.id }
 end
+
+
+# Finally, an inactive client
+Client.make status: 'Inactive'

@@ -5,16 +5,16 @@ include Faker
 
 Sham.define do
   # User
-  email                                 { |index| index.to_s + Internet.email }
+  email                          { |index| index.to_s + Internet.email         }
   # Work Unit
-  description(:unique => false)         { Lorem.paragraph }
-  hours(:unique => false)               { BigDecimal("0.1")*rand(9) + rand(3) + 1 }
-  scheduled_at(:unique => false)        { Date.current }
-  hours_type(:unique => false)          { ["Normal", "Overtime", "CTO", "PTO"].sample }
+  description(:unique => false)  { Lorem.paragraph                             }
+  hours(:unique => false)        { BigDecimal("0.1")*rand(9) + rand(3)         }
+  scheduled_at(:unique => false) { Date.current                                }
+  hours_type(:unique => false)   { ["Normal", "Overtime", "CTO", "PTO"].sample }
   # Contact
-  email_address                         { |index| "#{index}" + Internet.email }
-  first_name(:unique => false)          { Name.first_name }
-  last_name(:unique => false)           { Name.last_name }
+  email_address                  { |index| "#{index}" + Internet.email         }
+  first_name(:unique => false)   { Name.first_name                             }
+  last_name(:unique => false)    { Name.last_name                              }
 end
 
 Contact.blueprint do
